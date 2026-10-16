@@ -46,7 +46,10 @@ export function Dialog({
     const vv = window.visualViewport;
     if (!open || !el || !vv) return;
     const sync = () => {
-      const keyboard = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      // Only when typing inside this sheet: a note box opened on top of it
+      // brings up the keyboard too, and the sheet behind should stay put.
+      const typingHere = el.contains(document.activeElement);
+      const keyboard = typingHere ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
       el.style.setProperty("--kb", `${Math.round(keyboard)}px`);
       el.style.setProperty("--vvh", `${Math.round(vv.height)}px`);
     };

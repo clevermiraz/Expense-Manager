@@ -7,7 +7,13 @@ import { ExpenseDialog } from "@/components/expense-dialog";
 import { Toaster } from "@/components/ui/toast";
 import { intlLocale, isLocale } from "@/i18n/config";
 
-type AppData = { categories: Category[]; currency: string; today: string };
+type AppData = {
+  categories: Category[];
+  /** Past notes per category id, most used first. */
+  noteSuggestions: Record<string, string[]>;
+  currency: string;
+  today: string;
+};
 type AppContextValue = AppData & {
   categoryById: Map<string, Category>;
   openExpense: (expense?: ExpenseRow | null, defaults?: { spentOn?: string; categoryId?: string }) => void;

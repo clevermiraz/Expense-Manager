@@ -55,7 +55,7 @@ function ExpenseForm({
 }) {
   const t = useTranslations("expenseForm");
   const tp = useTranslations("paymentMethods");
-  const { categories, currency } = useApp();
+  const { categories, currency, noteSuggestions } = useApp();
   const label = useCategoryLabel();
   const amountRef = useRef<HTMLInputElement>(null);
   const symbol = useCurrencySymbol();
@@ -191,7 +191,15 @@ function ExpenseForm({
                 placeholder={t("notePlaceholder")}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
+                list="note-suggestions"
+                autoComplete="off"
               />
+              {/* The browser's own dropdown of past notes for this category. */}
+              <datalist id="note-suggestions">
+                {(noteSuggestions[categoryId] ?? []).map((s) => (
+                  <option key={s} value={s} />
+                ))}
+              </datalist>
             </Field>
           </div>
         </div>

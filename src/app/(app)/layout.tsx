@@ -6,15 +6,19 @@ import { Logo } from "@/components/logo";
 import { AccountMenu, BottomNav, SidebarNav, SignOutButton } from "@/components/nav";
 import { InstallButton } from "@/components/pwa/install";
 import { ThemeSwitcher, ThemeToggle } from "@/components/theme";
-import { getCategories } from "@/lib/data";
+import { getCategories, getNoteSuggestions } from "@/lib/data";
 import { requireUser, userToday } from "@/lib/session";
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const user = await requireUser();
-  const [categories, t] = await Promise.all([getCategories(user.id), getTranslations("common")]);
+  const [categories, noteSuggestions, t] = await Promise.all([
+    getCategories(user.id),
+    getNoteSuggestions(user.id),
+    getTranslations("common"),
+  ]);
 
   return (
-    <AppProvider data={{ categories, currency: user.currency, today: userToday(user) }}>
+    <AppProvider data={{ categories, noteSuggestions, currency: user.currency, today: userToday(user) }}>
       <div className="min-h-dvh [--app-header-h:calc(env(safe-area-inset-top)+3.5rem)] md:flex">
         {/* Scrolls on its own when taller than the screen (e.g. a phone in landscape). */}
         <aside className="sticky top-0 hidden h-dvh w-60 shrink-0 flex-col overflow-y-auto overscroll-contain border-r border-line bg-surface px-4 py-5 md:flex">

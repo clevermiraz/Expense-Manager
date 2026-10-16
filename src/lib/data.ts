@@ -93,6 +93,33 @@ export async function getRecentExpenses(userId: string, limit = 6): Promise<Expe
     .limit(limit);
 }
 
+/** How many past notes to offer per category in the add sheet. */
+const NOTE_SUGGESTIONS = 6;
+
+/**
+ * The user's own past notes, per category, most used first (ties: most
+ * recent). Offered as one-tap suggestions when adding an expense.
+ */
+export async function getNoteSuggestions(userId: string): Promise<Record<string, string[]>> {
+  const rows = await db.execute<{ category_id: string; note: string }>(sql`
+    select category_id, note from (
+      select ${expense.categoryId} as category_id, btrim(${expense.note}) as note,
+        row_number() over (
+          partition by ${expense.categoryId}
+          order by count(*) desc, max(${expense.spentOn}) desc, max(${expense.createdAt}) desc
+        ) as rn
+      from ${expense}
+      where ${expense.userId} = ${userId} and btrim(coalesce(${expense.note}, '')) <> ''
+      group by ${expense.categoryId}, btrim(${expense.note})
+    ) ranked
+    where rn <= ${NOTE_SUGGESTIONS}
+    order by category_id, rn
+  `);
+  const byCategory: Record<string, string[]> = {};
+  for (const r of rows) (byCategory[r.category_id] ??= []).push(r.note);
+  return byCategory;
+}
+
 const num = (v: unknown) => Number(v ?? 0);
 
 export type MonthSummary = {

@@ -75,7 +75,10 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "otherDay": "Other day",
-    "optional": "optional"
+    "optional": "optional",
+    "addNote": "Add a note",
+    "clearNote": "Clear note",
+    "recentNotes": "Used before"
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",

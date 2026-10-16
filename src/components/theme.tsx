@@ -14,20 +14,23 @@ const darkQuery = () => window.matchMedia("(prefers-color-scheme: dark)");
 function applyTheme(theme: Theme) {
   document.documentElement.dataset.theme = theme;
   document.cookie = `${THEME_COOKIE}=${theme}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
-  // Keep the browser / installed-app title bar in step with the page.
-  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.remove());
-  const add = (color: string, media?: string) => {
-    const meta = document.createElement("meta");
-    meta.name = "theme-color";
+  // Keep the browser / installed-app title bar in step with the page. These
+  // <meta> tags are rendered by Next.js (generateViewport), so they're only
+  // updated in place: removing them makes React crash the next time it
+  // re-renders the head (e.g. after saving an expense).
+  const metas = [...document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')];
+  if (metas.length === 0) return;
+  if (theme === "system" && metas.length > 1) {
+    metas[0].content = THEME_COLOR.light;
+    metas[0].media = "(prefers-color-scheme: light)";
+    metas[1].content = THEME_COLOR.dark;
+    metas[1].media = "(prefers-color-scheme: dark)";
+    return;
+  }
+  const color = THEME_COLOR[theme === "system" ? (darkQuery().matches ? "dark" : "light") : theme];
+  for (const meta of metas) {
     meta.content = color;
-    if (media) meta.media = media;
-    document.head.append(meta);
-  };
-  if (theme === "system") {
-    add(THEME_COLOR.light, "(prefers-color-scheme: light)");
-    add(THEME_COLOR.dark, "(prefers-color-scheme: dark)");
-  } else {
-    add(THEME_COLOR[theme]);
+    meta.removeAttribute("media");
   }
 }
 

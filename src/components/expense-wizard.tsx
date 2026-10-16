@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, Delete, HandCoins, Pencil, Trash2 } from "lucide-react";
+import { CalendarDays, Delete, HandCoins, Pencil, PenLine, Trash2, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useApp, useCategoryLabel, useCurrencySymbol } from "@/components/app-context";
@@ -8,7 +8,8 @@ import { CategoryIcon } from "@/components/category-icon";
 import { useExpenseDraft, type ExpenseDefaults } from "@/components/expense-draft";
 import { Button } from "@/components/ui/button";
 import { DialogBody, DialogFooter, DialogHeader } from "@/components/ui/dialog";
-import { Field, Input } from "@/components/ui/field";
+import { inputClass } from "@/components/ui/field";
+import { NoteComposer, type NoteComposerHandle } from "@/components/note-composer";
 import type { ExpenseRow } from "@/lib/data";
 import { PAYMENT_METHODS } from "@/lib/default-categories";
 import { formatDay, formatNumber } from "@/lib/format";
@@ -61,7 +62,7 @@ export function ExpenseWizard({
   const tc = useTranslations("common");
   const tp = useTranslations("paymentMethods");
   const locale = useLocale();
-  const { categories, categoryById, currency, today } = useApp();
+  const { categories, categoryById, currency, today, noteSuggestions: allNotes } = useApp();
   const label = useCategoryLabel();
   const symbol = useCurrencySymbol();
   const draft = useExpenseDraft(expense, defaults, onDone, { preselectCategory: false });
@@ -72,6 +73,7 @@ export function ExpenseWizard({
   // After the details step has been seen once, the earlier steps return straight to it.
   const [reviewed, setReviewed] = useState(!!expense);
   const stepRef = useRef<HTMLDivElement>(null);
+  const composer = useRef<NoteComposerHandle>(null);
   const firstRender = useRef(true);
 
   function go(to: Step) {
@@ -156,6 +158,7 @@ export function ExpenseWizard({
 
   const shown = displayAmount(amount, locale);
   const category = categoryById.get(categoryId);
+  const noteSuggestions = allNotes[categoryId] ?? [];
   const yesterday = shiftDay(today, -1);
   const otherDay = spentOn !== today && spentOn !== yesterday;
   const n = (v: number) => formatNumber(v, locale);
@@ -335,34 +338,68 @@ export function ExpenseWizard({
                     className="relative flex min-w-0 flex-col items-start gap-1 rounded-2xl border border-line bg-muted/50 p-3 text-left hover:bg-muted cursor-pointer"
                   >
                     <span className="text-xs text-ink-3">{t("category")}</span>
-                    <span className="flex max-w-full items-center gap-2 text-sm font-medium text-ink">
+                    <span className="flex max-w-full items-center gap-2 text-sm font-medium leading-tight text-ink">
                       {category && <CategoryIcon icon={category.icon} color={category.color} size="sm" />}
-                      <span className="truncate">{label(category)}</span>
+                      <span className="line-clamp-2 break-words">{label(category)}</span>
                     </span>
                     <Pencil className="absolute right-3 top-3 size-3.5 text-ink-3" aria-hidden />
                   </button>
                 </div>
 
-                <Field
-                  label={
-                    <>
-                      {t("note")} <span className="font-normal text-ink-3">({t("optional")})</span>
-                    </>
-                  }
-                  htmlFor="note"
-                  error={draft.err("note")}
-                >
-                  <Input
-                    id="note"
-                    name="note"
-                    maxLength={200}
-                    autoComplete="off"
-                    enterKeyHint="done"
-                    placeholder={t("notePlaceholder")}
-                    value={draft.note}
-                    onChange={(e) => draft.setNote(e.target.value)}
-                  />
-                </Field>
+                {/* The note is typed in its own box at the top of the screen (see
+                    NoteComposer); past notes for this category are one tap away. */}
+                <div className="flex flex-col gap-2">
+                  <span className="text-sm font-medium text-ink-2">
+                    {t("note")} <span className="font-normal text-ink-3">({t("optional")})</span>
+                  </span>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => composer.current?.open()}
+                      aria-label={draft.note ? `${t("note")}: ${draft.note}` : t("addNote")}
+                      className={`${inputClass} flex items-center gap-2 text-left cursor-pointer ${draft.note ? "pr-11" : ""}`}
+                    >
+                      <PenLine className="size-4 shrink-0 text-ink-3" aria-hidden />
+                      <span className={`truncate ${draft.note ? "text-ink" : "text-ink-3"}`}>
+                        {draft.note || t("addNote")}
+                      </span>
+                    </button>
+                    {draft.note && (
+                      <button
+                        type="button"
+                        aria-label={t("clearNote")}
+                        onClick={() => draft.setNote("")}
+                        className="absolute right-1.5 top-1/2 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-ink-3 hover:bg-muted cursor-pointer"
+                      >
+                        <X className="size-4" aria-hidden />
+                      </button>
+                    )}
+                  </div>
+                  {noteSuggestions.length > 0 && (
+                    <div className="flex gap-1.5 overflow-x-auto [scrollbar-width:none]" aria-label={t("recentNotes")} role="group">
+                      {noteSuggestions.map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          aria-pressed={draft.note === s}
+                          onClick={() => draft.setNote(draft.note === s ? "" : s)}
+                          className={`max-w-[70%] shrink-0 truncate rounded-full border px-3 py-1.5 text-sm transition-colors cursor-pointer ${
+                            draft.note === s
+                              ? "border-primary bg-primary-soft font-medium text-ink"
+                              : "border-line bg-muted/60 text-ink-2 hover:bg-muted"
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {draft.err("note") && (
+                    <p className="text-xs text-danger" role="alert">
+                      {draft.err("note")}
+                    </p>
+                  )}
+                </div>
 
                 <fieldset className="flex flex-col gap-2">
                   <legend className="mb-2 text-sm font-medium text-ink-2">{t("date")}</legend>
@@ -456,6 +493,7 @@ export function ExpenseWizard({
           </form>
         )}
       </div>
+      <NoteComposer ref={composer} value={draft.note} suggestions={noteSuggestions} onDone={draft.setNote} />
     </div>
   );
 }

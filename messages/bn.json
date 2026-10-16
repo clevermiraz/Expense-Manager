@@ -75,7 +75,10 @@
     "today": "আজ",
     "yesterday": "গতকাল",
     "otherDay": "অন্য দিন",
-    "optional": "ঐচ্ছিক"
+    "optional": "ঐচ্ছিক",
+    "addNote": "নোট লিখুন",
+    "clearNote": "নোট মুছুন",
+    "recentNotes": "আগে লিখেছেন"
   },
   "errors": {
     "generic": "কিছু একটা সমস্যা হয়েছে। আবার চেষ্টা করুন।",

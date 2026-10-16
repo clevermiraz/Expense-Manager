@@ -68,7 +68,15 @@ test("mobile: step-by-step add sheet", async ({ page }) => {
   // Step 3: summary, optional details, save & add another.
   await expect(dialog.getByText("Step 3 of 3 · Details")).toBeVisible();
   await expect(dialog.getByRole("button", { name: "Change amount" })).toContainText("1,250.5");
-  await dialog.getByLabel(/^Note/).fill("Rice and lentils");
+  // The note opens in its own box at the top; Enter closes it but doesn't save.
+  await dialog.getByRole("button", { name: "Add a note" }).click();
+  const noteBox = page.getByRole("dialog", { name: "Note" });
+  await expect(noteBox.getByLabel(/^Note/)).toBeFocused();
+  await page.keyboard.type("Rice and lentils");
+  await page.keyboard.press("Enter");
+  await expect(noteBox).toBeHidden();
+  await expect(page.getByText("Expense added")).toBeHidden();
+  await expect(dialog.getByRole("button", { name: "Note: Rice and lentils" })).toBeVisible();
   await dialog.getByRole("button", { name: "Yesterday" }).click();
   await dialog.getByRole("radio", { name: /Baki/ }).click();
   await expect(dialog.getByText(/pay it later/)).toBeVisible();
@@ -82,6 +90,13 @@ test("mobile: step-by-step add sheet", async ({ page }) => {
   await page.keyboard.press("Enter");
   await expect(dialog.getByRole("radio", { name: "Groceries" })).toHaveAttribute("aria-checked", "true");
   await dialog.getByRole("radio", { name: "Groceries" }).click();
+  // The note used before for Groceries is offered as a one-tap suggestion.
+  const used = dialog.getByRole("group", { name: "Used before" });
+  await expect(used.getByRole("button", { name: "Rice and lentils" })).toBeVisible();
+  await used.getByRole("button", { name: "Rice and lentils" }).click();
+  await expect(dialog.getByRole("button", { name: "Note: Rice and lentils" })).toBeVisible();
+  await dialog.getByRole("button", { name: "Clear note" }).click();
+  await expect(dialog.getByRole("button", { name: "Add a note" })).toBeVisible();
   await dialog.getByRole("button", { name: "Save", exact: true }).click();
   await expect(dialog).toBeHidden();
 
@@ -90,7 +105,7 @@ test("mobile: step-by-step add sheet", async ({ page }) => {
   await expect(page.getByTestId("expense-row")).toHaveCount(2);
   await page.getByTestId("expense-row").filter({ hasText: "Rice and lentils" }).click();
   await expect(dialog.getByRole("button", { name: "Back" })).toBeHidden();
-  await expect(dialog.getByLabel(/^Note/)).toHaveValue("Rice and lentils");
+  await expect(dialog.getByRole("button", { name: "Note: Rice and lentils" })).toBeVisible();
   await dialog.getByRole("button", { name: "Change amount" }).click();
   await page.keyboard.press("Backspace");
   await page.keyboard.press("Backspace");
