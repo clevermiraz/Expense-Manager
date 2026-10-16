@@ -9,7 +9,7 @@ import { useApp, useCategoryLabel } from "@/components/app-context";
 import { CategoryIcon } from "@/components/category-icon";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
-import { Field, Input } from "@/components/ui/field";
+import { Field, Input, inputClass } from "@/components/ui/field";
 import { toast } from "@/components/ui/toast";
 import type { ExpenseRow } from "@/lib/data";
 import { PAYMENT_METHODS, type PaymentMethod } from "@/lib/default-categories";
@@ -123,13 +123,13 @@ function ExpenseForm({
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           aria-invalid={!!errors.amount}
-          className="h-12 text-xl font-semibold tabular"
+          className="h-14 text-3xl font-semibold tracking-tight tabular sm:h-14 sm:text-2xl"
         />
       </Field>
 
       <fieldset className="flex flex-col gap-1.5">
         <legend className="mb-1.5 text-sm font-medium text-ink-2">{t("category")}</legend>
-        <div role="radiogroup" aria-label={t("category")} className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+        <div role="radiogroup" aria-label={t("category")} className="grid grid-cols-4 gap-1.5 sm:gap-2">
           {categories.map((c) => {
             const active = c.id === categoryId;
             return (
@@ -139,12 +139,12 @@ function ExpenseForm({
                 role="radio"
                 aria-checked={active}
                 onClick={() => setCategoryId(c.id)}
-                className={`flex flex-col items-center gap-1 rounded-xl border px-1 py-2 text-xs transition-colors cursor-pointer ${
-                  active ? "border-primary bg-primary-soft text-ink" : "border-line text-ink-2 hover:bg-muted"
+                className={`flex min-w-0 flex-col items-center gap-1 rounded-2xl border px-1 py-2 text-[11px] leading-tight transition-colors cursor-pointer sm:text-xs ${
+                  active ? "border-primary bg-primary-soft font-medium text-ink ring-1 ring-primary" : "border-line text-ink-2 hover:bg-muted"
                 }`}
               >
                 <CategoryIcon icon={c.icon} color={c.color} size="sm" />
-                <span className="line-clamp-1 w-full text-center">{label(c)}</span>
+                <span className="line-clamp-2 w-full text-center break-words">{label(c)}</span>
               </button>
             );
           })}
@@ -169,7 +169,7 @@ function ExpenseForm({
             name="paymentMethod"
             value={paymentMethod}
             onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-            className="h-10 w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25"
+            className={`${inputClass} pr-8`}
           >
             {PAYMENT_METHODS.map((m) => (
               <option key={m} value={m}>
@@ -191,18 +191,19 @@ function ExpenseForm({
         />
       </Field>
 
-      <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
+      {/* Sticky so Save stays in reach while scrolling the category grid on small phones. */}
+      <div className="sticky bottom-0 -mx-5 -mb-[max(1.25rem,env(safe-area-inset-bottom))] mt-1 flex flex-wrap items-center justify-between gap-2 border-t border-line bg-surface px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-3">
         {expense ? (
           <Button type="button" variant="ghost" onClick={remove} loading={deleting} className="text-danger">
             <Trash2 className="size-4" aria-hidden />
             {confirmingDelete ? t("confirmDelete") : t("delete")}
           </Button>
         ) : (
-          <Button type="button" variant="secondary" onClick={() => submit(true)} disabled={pending}>
+          <Button type="button" variant="secondary" onClick={() => submit(true)} disabled={pending} className="leading-tight max-sm:flex-1 max-sm:px-3">
             {t("saveAndAdd")}
           </Button>
         )}
-        <Button type="submit" loading={pending} className="min-w-28">
+        <Button type="submit" loading={pending} className="min-w-28 max-sm:flex-1">
           {t("save")}
         </Button>
       </div>

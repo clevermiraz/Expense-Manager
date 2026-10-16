@@ -16,6 +16,14 @@ export default defineConfig({
     locale: "en-US",
     timezoneId: "Asia/Dhaka",
     trace: "retain-on-failure",
+    // The app defaults to Bangla; the specs are written against the English UI.
+    // (i18n.spec.ts clears this to test the default.)
+    storageState: {
+      cookies: [
+        { name: "NEXT_LOCALE", value: "en", domain: "localhost", path: "/", expires: -1, httpOnly: false, secure: false, sameSite: "Lax" },
+      ],
+      origins: [],
+    },
     screenshot: "only-on-failure",
   },
   projects: [

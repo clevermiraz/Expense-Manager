@@ -5,19 +5,19 @@ type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md" | "icon";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-primary text-white hover:bg-primary-strong shadow-sm",
+  primary: "bg-primary text-white hover:bg-primary-strong shadow-sm shadow-primary/25",
   secondary: "bg-surface text-ink border border-line hover:bg-muted",
   ghost: "text-ink-2 hover:bg-muted hover:text-ink",
   danger: "bg-danger text-white hover:opacity-90 shadow-sm",
 };
 const sizes: Record<Size, string> = {
   sm: "h-8 px-3 text-sm gap-1.5",
-  md: "h-10 px-4 text-sm gap-2",
+  md: "h-11 px-4 text-sm gap-2 sm:h-10",
   icon: "size-9 justify-center",
 };
 
 export function buttonClass(variant: Variant = "primary", size: Size = "md", extra = "") {
-  return `inline-flex items-center justify-center rounded-xl font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-50 cursor-pointer ${variants[variant]} ${sizes[size]} ${extra}`;
+  return `inline-flex items-center justify-center rounded-xl font-medium transition-[color,background-color,transform] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-50 cursor-pointer ${variants[variant]} ${sizes[size]} ${extra}`;
 }
 
 export function Button({

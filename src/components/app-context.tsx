@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { createContext, use, useCallback, useMemo, useState, type ReactNode } from "react";
+import { createContext, use, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Category, ExpenseRow } from "@/lib/data";
 import { ExpenseDialog } from "@/components/expense-dialog";
 import { Toaster } from "@/components/ui/toast";
@@ -24,6 +24,17 @@ export function AppProvider({ data, children }: { data: AppData; children: React
   const openExpense = useCallback<AppContextValue["openExpense"]>((expense, defaults) => {
     setDialog({ open: true, expense: expense ?? null, defaults });
   }, []);
+
+  // The installed app's "Add expense" shortcut opens /dashboard?add=1.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("add") !== "1") return;
+    url.searchParams.delete("add");
+    window.history.replaceState(null, "", url);
+    // One-time read of the launch URL on mount; it can't be known during SSR.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    openExpense();
+  }, [openExpense]);
 
   const value = useMemo<AppContextValue>(
     () => ({ ...data, categoryById: new Map(data.categories.map((c) => [c.id, c])), openExpense }),

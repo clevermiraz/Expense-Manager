@@ -16,7 +16,7 @@ export function Toaster() {
   const [items, setItems] = useState<Toast[]>([]);
   useEffect(() => {
     const add = (t: Toast) => {
-      setItems((cur) => [...cur, t]);
+      setItems((cur) => [...cur.slice(-1), t]);
       setTimeout(() => setItems((cur) => cur.filter((x) => x.id !== t.id)), 3500);
     };
     listeners.push(add);
@@ -28,13 +28,13 @@ export function Toaster() {
   return (
     <div
       aria-live="polite"
-      className="pointer-events-none fixed inset-x-0 bottom-20 z-50 flex flex-col items-center gap-2 px-4 md:bottom-6"
+      className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+6.5rem)] z-50 flex flex-col items-center gap-2 px-4 md:bottom-6"
     >
       {items.map((t) => (
         <div
           key={t.id}
           role="status"
-          className="pointer-events-auto flex items-center gap-2 rounded-xl border border-line bg-surface px-4 py-2.5 text-sm text-ink shadow-lg"
+          className="toast-in pointer-events-auto flex items-center gap-2 rounded-full border border-line bg-surface px-4 py-2.5 text-sm font-medium text-ink shadow-float"
         >
           {t.kind === "success" ? (
             <CircleCheck className="size-4 text-good" aria-hidden />

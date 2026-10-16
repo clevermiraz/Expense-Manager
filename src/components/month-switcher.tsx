@@ -22,14 +22,14 @@ export function MonthSwitcher({ month, maxMonth }: { month: string; maxMonth: st
   const nextMonth = addMonths(month, 1);
   const canNext = nextMonth <= maxMonth;
   const btn =
-    "inline-flex size-9 items-center justify-center rounded-xl text-ink-2 hover:bg-muted hover:text-ink aria-disabled:pointer-events-none aria-disabled:opacity-30";
+    "inline-flex size-10 items-center sm:size-9 justify-center rounded-xl text-ink-2 hover:bg-muted hover:text-ink aria-disabled:pointer-events-none aria-disabled:opacity-30";
 
   return (
-    <div className="inline-flex items-center gap-1 rounded-2xl border border-line bg-surface p-0.5">
+    <div className="inline-flex items-center gap-1 rounded-2xl border border-line bg-surface p-0.5 shadow-card max-sm:flex-1">
       <Link href={href(prev)} className={btn} aria-label={t("previousMonth")} scroll={false}>
         <ChevronLeft className="size-4" aria-hidden />
       </Link>
-      <span className="min-w-32 text-center text-sm font-semibold text-ink" aria-live="polite" data-testid="current-month">
+      <span className="min-w-32 flex-1 text-center text-sm font-semibold text-ink" aria-live="polite" data-testid="current-month">
         {formatMonth(month, locale)}
       </span>
       <Link

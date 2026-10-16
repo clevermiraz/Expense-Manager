@@ -100,7 +100,7 @@ function ExpenseItem({ expense, showDate = false }: { expense: ExpenseRow; showD
         <span className="shrink-0 text-sm font-semibold text-ink tabular" data-testid="expense-amount">
           {formatMoney(expense.amount, currency, locale)}
         </span>
-        <Pencil className="size-3.5 shrink-0 text-ink-3 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
+        <Pencil className="hidden size-3.5 shrink-0 text-ink-3 opacity-0 transition-opacity group-hover:opacity-100 sm:block" aria-hidden />
       </button>
     </li>
   );

@@ -1,11 +1,24 @@
 @import "tailwindcss";
 
+/* Dark when the user picks "dark", or picks "system" and the device is dark.
+   <html data-theme> is set server-side from the theme cookie (default light). */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where([data-theme="system"], [data-theme="system"] *) {
+      @slot;
+    }
+  }
+}
+
 :root {
   color-scheme: light;
-  --page: #f6f7f9;
+  --page: #f4f5f8;
   --surface: #ffffff;
-  --muted: #f1f2f4;
-  --line: #e4e5e9;
+  --muted: #f1f2f5;
+  --line: #e6e7ec;
   --ink: #0f1115;
   --ink-2: #4a4d55;
   --ink-3: #7c7f88;
@@ -34,8 +47,8 @@
   --heat-ink-6: #ffffff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
+:root {
+  @variant dark {
     color-scheme: dark;
     --page: #0d0d0d;
     --surface: #1a1a19;
@@ -85,11 +98,64 @@
   --color-warn: var(--warn);
   --font-sans: var(--font-geist-sans), var(--font-bengali), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
+  /* brand gradient, same in both themes so white text on it keeps its contrast */
+  --color-brand-from: #3f8ef0;
+  --color-brand-to: #1c5cab;
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.03);
+  --shadow-float: 0 8px 30px rgb(16 24 40 / 0.12), 0 2px 6px rgb(16 24 40 / 0.06);
 }
 
 body {
   background: var(--page);
   color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Modal sheets: slide up from the bottom on phones, pop in on larger screens. */
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+dialog.sheet[open] {
+  animation: pop-in 0.2s ease-out;
+}
+dialog.sheet[open]::backdrop {
+  animation: fade-in 0.2s ease-out;
+}
+@media (max-width: 639px) {
+  dialog.sheet[open] {
+    animation: sheet-up 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+}
+.toast-in {
+  animation: toast-in 0.2s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog.sheet[open],
+  dialog.sheet[open]::backdrop,
+  .toast-in {
+    animation: none;
+  }
+}
+
+/* Horizontal chip rows that scroll without a visible scrollbar. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 .tabular {

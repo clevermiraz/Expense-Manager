@@ -106,13 +106,15 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile
           testId="stat-total"
+          tone="hero"
+          className="col-span-2 lg:col-span-1"
           label={isCurrent ? t("spentThisMonth") : t("spentIn", { month: formatMonth(month, locale) })}
           value={money(summary.total)}
           footer={
             delta === null ? (
               t("noPrevious")
             ) : (
-              <span className={`inline-flex items-center gap-1 ${delta > 0 ? "text-danger" : "text-good"}`}>
+              <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 font-medium text-white">
                 {delta > 0 ? <ArrowUpRight className="size-3.5" aria-hidden /> : <ArrowDownRight className="size-3.5" aria-hidden />}
                 {t("vsLastMonth", { pct: formatPercent(delta, locale, true) })}
               </span>
@@ -133,6 +135,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
         />
         <StatTile
           testId="stat-budget"
+          className="col-span-2 lg:col-span-1"
           label={t("budgetLeft")}
           value={budgetLimit === null ? "—" : money(budgetLimit - summary.total)}
           footer={
@@ -170,7 +173,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
               {unusual.map((u) => (
                 <div
                   key={u.categoryId}
-                  className="flex items-start gap-2 rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-ink-2"
+                  className="flex items-start gap-3 rounded-2xl border border-warn/25 bg-warn/8 px-4 py-3 text-sm text-ink-2"
                 >
                   <Lightbulb className="mt-0.5 size-4 shrink-0 text-warn" aria-hidden />
                   <span>

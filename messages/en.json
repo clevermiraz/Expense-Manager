@@ -277,5 +277,36 @@
     "deleteCategory": "Delete",
     "confirmDeleteCategory": "Tap again: its expenses move to Other",
     "categoryDeleted": "Category deleted"
+  },
+  "install": {
+    "title": "Install {app}",
+    "intro": "Add {app} to your device and open it like any other app.",
+    "benefitFast": "One tap from your home screen, dock or taskbar",
+    "benefitFull": "Full screen, without the browser bars",
+    "benefitDevices": "Works on phone, PC and Mac",
+    "install": "Install app",
+    "notNow": "Not now",
+    "gotIt": "Got it",
+    "iosStep1": "Tap the Share button in the browser toolbar (in Safari it may be under the ••• menu).",
+    "iosStep2": "Scroll down and choose “Add to Home Screen”.",
+    "iosStep3": "Tap “Add”. {app} will appear on your home screen.",
+    "macStep1": "In Safari, open the File menu, or click the Share button.",
+    "macStep2": "Choose “Add to Dock”.",
+    "macStep3": "Click “Add”. {app} will open from your Dock like any app.",
+    "settingsTitle": "Install the app",
+    "settingsHint": "Use {app} like a native app on your phone, PC or Mac."
+  },
+  "offline": {
+    "title": "You're offline",
+    "body": "{app} needs an internet connection to load your expenses. Check your connection and try again.",
+    "retry": "Try again"
+  },
+  "theme": {
+    "label": "Appearance",
+    "hint": "Light, dark, or follow your device's setting.",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle": "Switch light / dark mode"
   }
 }

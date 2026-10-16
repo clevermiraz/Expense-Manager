@@ -7,6 +7,8 @@ import { ProfileForm } from "@/components/settings/profile-form";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { SignOutButton } from "@/components/nav";
 import { PageHeader } from "@/components/page-header";
+import { InstallCard } from "@/components/pwa/install";
+import { ThemeSwitcher } from "@/components/theme";
 import { buttonClass } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { requireUser } from "@/lib/session";
@@ -18,13 +20,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SettingsPage() {
   const user = await requireUser();
-  const t = await getTranslations("settings");
+  const [t, tt] = await Promise.all([getTranslations("settings"), getTranslations("theme")]);
 
   return (
     <>
       <PageHeader title={t("title")} />
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="flex flex-col gap-4">
+          <InstallCard />
           <Card>
             <CardHeader title={t("profile")} subtitle={user.email} />
             <ProfileForm name={user.name} currency={user.currency} timezone={user.timezone} />
@@ -32,6 +35,10 @@ export default async function SettingsPage() {
           <Card>
             <CardHeader title={t("language")} subtitle={t("languageHint")} />
             <LanguageSwitcher />
+          </Card>
+          <Card>
+            <CardHeader title={tt("label")} subtitle={tt("hint")} />
+            <ThemeSwitcher />
           </Card>
           <Card>
             <CardHeader title={t("password")} />

@@ -126,11 +126,11 @@ function BudgetRow({ row, monthProgress }: { row: BudgetRowData; monthProgress: 
   }
 
   return (
-    <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center" data-testid="budget-row">
+    <div className="grid grid-cols-[1fr_auto] items-start gap-3 sm:items-center" data-testid="budget-row">
       <div className="min-w-0">
         <div className="flex items-center gap-2">
           {cat && <CategoryIcon icon={cat.icon} color={cat.color} size="sm" />}
-          <label htmlFor={inputId} className="font-medium text-ink">
+          <label htmlFor={inputId} className="min-w-0 font-medium leading-snug text-ink">
             {name}
           </label>
         </div>
@@ -155,8 +155,9 @@ function BudgetRow({ row, monthProgress }: { row: BudgetRowData; monthProgress: 
           </div>
         )}
       </div>
-      <div className="flex flex-col gap-1 sm:items-end">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col items-end gap-1">
+        {/* Suggestion sits under the input on phones so the row stays one line. */}
+        <div className="flex flex-col-reverse items-end gap-1 sm:flex-row sm:items-center sm:gap-2">
           {row.suggestion > 0 && row.budget !== row.suggestion && (
             <Button
               type="button"
@@ -184,7 +185,7 @@ function BudgetRow({ row, monthProgress }: { row: BudgetRowData; monthProgress: 
             }}
             aria-invalid={!!error}
             disabled={pending}
-            className={`${inputClass} w-32 text-right tabular`}
+            className={`${inputClass} max-w-28 text-right tabular sm:max-w-32`}
           />
         </div>
         {error && (

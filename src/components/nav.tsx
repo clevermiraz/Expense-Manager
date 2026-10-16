@@ -30,7 +30,7 @@ export function SidebarNav() {
       <button
         type="button"
         onClick={() => openExpense()}
-        className="mb-3 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-strong cursor-pointer"
+        className="mb-3 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-linear-to-br from-brand-from to-brand-to px-4 text-sm font-medium text-white shadow-sm shadow-primary/25 hover:opacity-95 cursor-pointer"
       >
         <Plus className="size-4" aria-hidden />
         {t("addExpense")}
@@ -63,18 +63,24 @@ export function BottomNav() {
       key={href}
       href={href}
       aria-current={isActive(href) ? "page" : undefined}
-      className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium ${
+      className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 py-1 text-[11px] font-medium transition-colors ${
         isActive(href) ? "text-primary" : "text-ink-3"
       }`}
     >
-      <Icon className="size-5" aria-hidden />
-      {t(key)}
+      <span
+        className={`inline-flex h-7 w-12 items-center justify-center rounded-full transition-colors ${
+          isActive(href) ? "bg-primary-soft" : ""
+        }`}
+      >
+        <Icon className="size-5" aria-hidden />
+      </span>
+      <span className="max-w-full truncate">{t(key)}</span>
     </Link>
   );
   return (
     <nav
       aria-label={t("main")}
-      className="fixed inset-x-0 bottom-0 z-30 flex items-center border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.5rem)] z-30 flex items-center rounded-[1.75rem] border border-line/70 bg-surface/85 p-1.5 shadow-float backdrop-blur-xl md:hidden"
     >
       {left.map(link)}
       <div className="flex flex-1 justify-center">
@@ -82,9 +88,9 @@ export function BottomNav() {
           type="button"
           onClick={() => openExpense()}
           aria-label={t("addExpense")}
-          className="-mt-6 inline-flex size-13 items-center justify-center rounded-full bg-primary text-white shadow-lg ring-4 ring-page cursor-pointer"
+          className="inline-flex size-12 items-center justify-center rounded-2xl bg-linear-to-br from-brand-from to-brand-to text-white shadow-lg shadow-primary/30 transition-transform active:scale-95 cursor-pointer"
         >
-          <Plus className="size-6" aria-hidden />
+          <Plus className="size-6" strokeWidth={2.5} aria-hidden />
         </button>
       </div>
       {right.map(link)}

@@ -1,6 +1,18 @@
 import { expect, test } from "@playwright/test";
 import { addExpense, register } from "./helpers";
 
+test.describe("first visit, no language chosen", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test("defaults to Bangla even for an English browser", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("html")).toHaveAttribute("lang", "bn");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("আপনার টাকা কোথায় যাচ্ছে, জেনে নিন");
+    await page.getByRole("button", { name: "EN", exact: true }).click();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Know exactly where your money goes");
+  });
+});
+
 test("switch to Bangla on the landing page and it persists", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Know exactly where your money goes");

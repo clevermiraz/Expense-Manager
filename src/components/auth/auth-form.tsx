@@ -74,8 +74,8 @@ export function AuthForm({ mode, next }: { mode: "login" | "register"; next?: st
   }
 
   return (
-    <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
-      <h1 className="text-xl font-semibold text-ink">{isRegister ? t("registerTitle") : t("loginTitle")}</h1>
+    <div className="rounded-3xl border border-line/70 bg-surface p-6 shadow-float">
+      <h1 className="text-2xl font-bold tracking-tight text-ink">{isRegister ? t("registerTitle") : t("loginTitle")}</h1>
       <p className="mt-1 text-sm text-ink-3">{isRegister ? t("registerSubtitle") : t("loginSubtitle")}</p>
 
       <form noValidate onSubmit={onSubmit} className="mt-6 flex flex-col gap-4">
@@ -135,7 +135,7 @@ export function AuthForm({ mode, next }: { mode: "login" | "register"; next?: st
           </p>
         )}
 
-        <Button type="submit" loading={pending} className="mt-1 w-full">
+        <Button type="submit" loading={pending} className="mt-1 h-12 w-full text-base sm:h-11">
           {isRegister ? t("registerButton") : t("loginButton")}
         </Button>
       </form>
