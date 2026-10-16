@@ -24,3 +24,13 @@ test("mobile: bottom nav and floating add button", async ({ page }) => {
     expect(overflow, `horizontal overflow on ${path}`).toBeLessThanOrEqual(0);
   }
 });
+
+test("mobile: sign out from the header account menu", async ({ page }) => {
+  const { name, email } = await register(page);
+  await page.getByRole("button", { name: "Open account menu" }).click();
+  const sheet = page.getByRole("dialog");
+  await expect(sheet.getByText(name)).toBeVisible();
+  await expect(sheet.getByText(email)).toBeVisible();
+  await sheet.getByRole("button", { name: "Sign out" }).click();
+  await expect(page).toHaveURL(/\/login/);
+});

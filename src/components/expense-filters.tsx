@@ -3,7 +3,7 @@
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useApp, useCategoryLabel } from "@/components/app-context";
 import { inputClass } from "@/components/ui/field";
 
@@ -17,12 +17,19 @@ export function ExpenseFilters() {
   const [q, setQ] = useState(params.get("q") ?? "");
   const [, startTransition] = useTransition();
 
+  // Filters requested but possibly not in the URL yet: router.replace() is
+  // async, so a debounced search fired right after a category change must
+  // build on that change rather than on the stale URL (and vice versa).
+  const pending = useRef<URLSearchParams | null>(null);
+  useEffect(() => {
+    pending.current = null; // the URL has caught up
+  }, [params]);
+
   const update = (key: string, value: string) => {
-    // Read the live URL, not the render-time params, so a pending category
-    // change isn't overwritten by a debounced search (and vice versa).
-    const next = new URLSearchParams(window.location.search);
+    const next = new URLSearchParams(pending.current ?? window.location.search);
     if (value) next.set(key, value);
     else next.delete(key);
+    pending.current = next;
     startTransition(() => router.replace(`${pathname}?${next.toString()}`, { scroll: false }));
   };
 
@@ -35,8 +42,9 @@ export function ExpenseFilters() {
   }, [q]);
 
   return (
-    <div className="flex flex-col gap-2 sm:flex-row">
-      <label className="relative flex-1">
+    // One row on phones too, so the list starts higher up the screen.
+    <div className="flex gap-2">
+      <label className="relative min-w-0 flex-1">
         <span className="sr-only">{t("search")}</span>
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3" aria-hidden />
         <input
@@ -47,12 +55,12 @@ export function ExpenseFilters() {
           className={`${inputClass} pl-9`}
         />
       </label>
-      <label className="sm:w-56">
+      <label className="w-[46%] shrink-0 sm:w-56">
         <span className="sr-only">{t("filterCategory")}</span>
         <select
           value={params.get("category") ?? ""}
           onChange={(e) => update("category", e.target.value)}
-          className={inputClass}
+          className={`${inputClass} truncate pr-8`}
           aria-label={t("filterCategory")}
         >
           <option value="">{t("allCategories")}</option>

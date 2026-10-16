@@ -150,12 +150,16 @@ dialog.sheet[open]::backdrop {
   }
 }
 
-/* Horizontal chip rows that scroll without a visible scrollbar. */
-.no-scrollbar {
-  scrollbar-width: none;
-}
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+/* Scroll shadows (pure CSS): the "local" covers scroll with the content and
+   hide the fixed shadows once you reach the top / bottom edge. */
+.scroll-shadows {
+  --shade: color-mix(in srgb, var(--ink) 14%, transparent);
+  background:
+    linear-gradient(var(--surface) 30%, transparent) top / 100% 2.5rem no-repeat local,
+    linear-gradient(transparent, var(--surface) 70%) bottom / 100% 2.5rem no-repeat local,
+    radial-gradient(farthest-side at 50% 0, var(--shade), transparent) top / 100% 0.75rem no-repeat scroll,
+    radial-gradient(farthest-side at 50% 100%, var(--shade), transparent) bottom / 100% 0.75rem no-repeat scroll;
+  background-color: var(--surface);
 }
 
 .tabular {

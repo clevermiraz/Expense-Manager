@@ -54,7 +54,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       data-theme={theme}
       className={`${geistSans.variable} ${geistMono.variable} ${bengali.variable} h-full antialiased`}
     >
-      <body className="min-h-full font-sans">
+      {/* Extensions like Grammarly add attributes to <body> before hydration. */}
+      <body className="min-h-full font-sans" suppressHydrationWarning>
         <NextIntlClientProvider>
           <ThemeProvider initial={theme}>
             {children}

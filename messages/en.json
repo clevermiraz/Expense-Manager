@@ -15,7 +15,9 @@
     "budgets": "Budgets",
     "settings": "Settings",
     "signOut": "Sign out",
-    "addExpense": "Add expense"
+    "addExpense": "Add expense",
+    "account": "Account",
+    "openAccount": "Open account menu"
   },
   "categories": {
     "food": "Food & dining",
@@ -37,7 +39,8 @@
     "cash": "Cash",
     "card": "Card",
     "mobile_banking": "Mobile banking",
-    "bank": "Bank transfer"
+    "bank": "Bank transfer",
+    "baki": "Baki (pay later)"
   },
   "expenseForm": {
     "addTitle": "Add expense",
@@ -54,7 +57,8 @@
     "confirmDelete": "Tap again to delete",
     "saved": "Expense added",
     "updated": "Expense updated",
-    "deleted": "Expense deleted"
+    "deleted": "Expense deleted",
+    "bakiHint": "Marked as baki in your list, so you remember to pay it later."
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -76,7 +80,8 @@
     "iconInvalid": "Choose an icon.",
     "currencyInvalid": "Choose a currency.",
     "timezoneInvalid": "Choose a valid time zone.",
-    "cannotDeleteOther": "The \"Other\" category can't be deleted."
+    "cannotDeleteOther": "The \"Other\" category can't be deleted.",
+    "amountRequired": "Enter an amount."
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -153,7 +158,8 @@
     "budgets": "Budgets",
     "manage": "Manage",
     "noBudgets": "No category budgets yet. Set some to get alerts when you're close to the limit.",
-    "moreBudgets": "{count, plural, one {+ # more budget on the Budgets page} other {+ # more budgets on the Budgets page}}"
+    "moreBudgets": "{count, plural, one {+ # more budget on the Budgets page} other {+ # more budgets on the Budgets page}}",
+    "overBudgetBy": "Over budget by"
   },
   "expenses": {
     "title": "Expenses",
@@ -276,7 +282,17 @@
     "categorySaved": "Category saved",
     "deleteCategory": "Delete",
     "confirmDeleteCategory": "Tap again: its expenses move to Other",
-    "categoryDeleted": "Category deleted"
+    "categoryDeleted": "Category deleted",
+    "account": "Account",
+    "dangerZone": "Delete account",
+    "dangerHint": "Permanently delete your account with all its expenses, budgets and categories. This can't be undone.",
+    "deleteAccount": "Delete my account",
+    "deleteConfirmTitle": "Delete your account?",
+    "deleteConfirmBody": "Everything in {email} will be deleted for good. You may want to export your expenses first.",
+    "deletePasswordLabel": "Enter your password to confirm",
+    "deleteConfirmButton": "Delete permanently",
+    "cancel": "Cancel",
+    "incorrectPassword": "Incorrect password."
   },
   "install": {
     "title": "Install {app}",

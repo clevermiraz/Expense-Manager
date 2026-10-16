@@ -35,7 +35,7 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
               router.refresh();
             })
           }
-          className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer ${
+          className={`rounded-lg px-2.5 py-1 text-xs max-sm:py-2 font-medium transition-colors cursor-pointer ${
             l === locale ? "bg-primary text-white" : "text-ink-2 hover:bg-muted"
           }`}
         >

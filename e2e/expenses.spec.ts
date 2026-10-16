@@ -26,7 +26,7 @@ test("amount and date validation", async ({ page }) => {
   const save = dialog.getByRole("button", { name: "Save", exact: true });
 
   await save.click();
-  await expect(dialog.getByText("Amount must be greater than zero.")).toBeVisible();
+  await expect(dialog.getByText("Enter an amount.")).toBeVisible();
 
   await dialog.getByLabel(/^Amount/).fill("-5");
   await save.click();

@@ -47,7 +47,8 @@ export function ExpenseList({ expenses, grouped = true }: { expenses: ExpenseRow
     <div className="flex flex-col gap-5">
       {groups.map((g) => (
         <section key={g.day} aria-label={formatDay(g.day, locale, { dateStyle: "full" })} data-testid="day-group">
-          <div className="mb-1 flex items-baseline justify-between border-b border-line pb-2 text-sm">
+          {/* Sticky under the app header so you always know which day you're looking at. */}
+          <div className="sticky top-(--app-header-h) z-10 -mx-4 mb-1 flex items-baseline justify-between border-b border-line bg-surface px-4 pb-2 pt-2 text-sm sm:-mx-5 sm:px-5 md:top-0">
             <h3 className="font-semibold text-ink">
               {g.day === today
                 ? t("today")
@@ -77,7 +78,9 @@ function ExpenseItem({ expense, showDate = false }: { expense: ExpenseRow; showD
   const { currency, categoryById, openExpense } = useApp();
   const label = useCategoryLabel();
   const cat = categoryById.get(expense.categoryId);
-  const meta = [showDate ? formatDay(expense.spentOn, locale) : null, tp(expense.paymentMethod)]
+  const baki = expense.paymentMethod === "baki";
+  // Baki gets its own badge below instead of plain meta text, so unpaid items stand out.
+  const meta = [showDate ? formatDay(expense.spentOn, locale) : null, baki ? null : tp(expense.paymentMethod)]
     .filter(Boolean)
     .join(" · ");
 
@@ -92,9 +95,16 @@ function ExpenseItem({ expense, showDate = false }: { expense: ExpenseRow; showD
         {cat && <CategoryIcon icon={cat.icon} color={cat.color} />}
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-ink">{expense.note || label(cat)}</p>
-          <p className="truncate text-xs text-ink-3">
-            {expense.note ? `${label(cat)} · ` : ""}
-            {meta}
+          <p className="flex min-w-0 items-center gap-1.5 text-xs text-ink-3">
+            <span className="truncate">
+              {expense.note ? `${label(cat)}${meta ? " · " : ""}` : ""}
+              {meta}
+            </span>
+            {baki && (
+              <span className="shrink-0 rounded-full bg-warn/15 px-1.5 py-px text-[10px] font-semibold text-warn">
+                {tp("baki")}
+              </span>
+            )}
           </p>
         </div>
         <span className="shrink-0 text-sm font-semibold text-ink tabular" data-testid="expense-amount">

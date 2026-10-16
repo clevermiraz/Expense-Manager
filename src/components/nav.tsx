@@ -1,11 +1,12 @@
 "use client";
 
-import { ChartColumn, LayoutDashboard, ListOrdered, LogOut, Plus, Settings, Target } from "lucide-react";
+import { ChartColumn, ChevronRight, LayoutDashboard, ListOrdered, LogOut, Plus, Settings, Target } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useApp } from "@/components/app-context";
+import { Dialog, DialogBody } from "@/components/ui/dialog";
 import { authClient } from "@/lib/auth-client";
 
 const ITEMS = [
@@ -98,7 +99,7 @@ export function BottomNav() {
   );
 }
 
-export function SignOutButton({ className = "" }: { className?: string }) {
+export function SignOutButton({ className = "", danger = false }: { className?: string; danger?: boolean }) {
   const t = useTranslations("nav");
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -112,10 +113,63 @@ export function SignOutButton({ className = "" }: { className?: string }) {
         router.push("/login");
         router.refresh();
       }}
-      className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-ink-2 hover:bg-muted hover:text-ink disabled:opacity-60 cursor-pointer ${className}`}
+      className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium disabled:opacity-60 cursor-pointer ${
+        danger ? "border border-danger/30 bg-danger/10 text-danger hover:bg-danger/15" : "text-ink-2 hover:bg-muted hover:text-ink"
+      } ${className}`}
     >
       <LogOut className="size-4" aria-hidden />
       {t("signOut")}
     </button>
+  );
+}
+
+/** Phone header: avatar that opens a sheet with the account, Settings and a clear Sign out. */
+export function AccountMenu({ name, email }: { name: string; email: string }) {
+  const t = useTranslations("nav");
+  const tc = useTranslations("common");
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const [lastPath, setLastPath] = useState(pathname);
+  // Close the sheet after navigating (e.g. tapping Settings).
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
+    setOpen(false);
+  }
+  const initial = name.trim().charAt(0).toUpperCase() || "?";
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-label={t("openAccount")}
+        className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-brand-from to-brand-to text-sm font-semibold text-white shadow-sm shadow-primary/30 cursor-pointer"
+      >
+        {initial}
+      </button>
+      <Dialog open={open} onClose={() => setOpen(false)} title={t("account")} closeLabel={tc("close")}>
+        <DialogBody>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3 rounded-2xl bg-muted p-3">
+              <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-brand-from to-brand-to text-lg font-semibold text-white">
+                {initial}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate font-semibold text-ink">{name}</p>
+                <p className="truncate text-sm text-ink-3">{email}</p>
+              </div>
+            </div>
+            <Link
+              href="/settings"
+              className="flex items-center gap-3 rounded-2xl border border-line px-4 py-3 text-sm font-medium text-ink hover:bg-muted"
+            >
+              <Settings className="size-4.5 text-ink-2" aria-hidden />
+              <span className="flex-1">{t("settings")}</span>
+              <ChevronRight className="size-4 text-ink-3" aria-hidden />
+            </Link>
+            <SignOutButton danger className="h-12 w-full justify-center rounded-2xl" />
+          </div>
+        </DialogBody>
+      </Dialog>
+    </>
   );
 }

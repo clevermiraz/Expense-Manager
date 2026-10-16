@@ -2,6 +2,7 @@ import { Download } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { CategoryManager } from "@/components/settings/category-manager";
+import { DeleteAccount } from "@/components/settings/delete-account";
 import { PasswordForm } from "@/components/settings/password-form";
 import { ProfileForm } from "@/components/settings/profile-form";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -27,6 +28,19 @@ export default async function SettingsPage() {
       <PageHeader title={t("title")} />
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="flex flex-col gap-4">
+          {/* Signed-in account + sign out, first thing on the page. */}
+          <Card>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-brand-from to-brand-to text-lg font-semibold text-white">
+                {user.name.trim().charAt(0).toUpperCase() || "?"}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-semibold text-ink">{user.name}</p>
+                <p className="truncate text-sm text-ink-3">{user.email}</p>
+              </div>
+              <SignOutButton danger className="max-sm:h-11 max-sm:w-full max-sm:justify-center" />
+            </div>
+          </Card>
           <InstallCard />
           <Card>
             <CardHeader title={t("profile")} subtitle={user.email} />
@@ -51,7 +65,6 @@ export default async function SettingsPage() {
                 <Download className="size-4" aria-hidden />
                 {t("exportAll")}
               </a>
-              <SignOutButton className="border border-line" />
             </div>
           </Card>
         </div>
@@ -59,6 +72,9 @@ export default async function SettingsPage() {
           <CardHeader title={t("categories")} subtitle={t("categoriesHint")} />
           <CategoryManager />
         </Card>
+      </div>
+      <div className="mt-4">
+        <DeleteAccount email={user.email} />
       </div>
     </>
   );

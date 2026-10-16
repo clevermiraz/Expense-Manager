@@ -3,24 +3,27 @@ import { dayToDate, monthToDate } from "@/lib/dates";
 
 const tag = (locale: string) => intlLocale[locale as Locale] ?? "en-US";
 
-/**
- * `compact` for axis ticks (৳12K); `whole` for derived figures such as
- * averages and projections, where paisa/cents are just noise.
- */
-export function formatMoney(
-  value: number,
-  currency: string,
-  locale: string,
-  opts: { compact?: boolean; whole?: boolean } = {},
-): string {
-  const { compact = false, whole = false } = opts;
+/** `whole` for derived figures such as averages and projections, where paisa/cents are just noise. */
+export function formatMoney(value: number, currency: string, locale: string, opts: { whole?: boolean } = {}): string {
   return new Intl.NumberFormat(tag(locale), {
     style: "currency",
     currency,
     currencyDisplay: "narrowSymbol",
     minimumFractionDigits: 0,
-    maximumFractionDigits: compact ? 1 : whole ? 0 : 2,
-    notation: compact ? "compact" : "standard",
+    maximumFractionDigits: opts.whole ? 0 : 2,
+  }).format(value);
+}
+
+/**
+ * Short amounts for chart axes and dense tables: "35K" / "৩৫ হাজার".
+ * No currency sign (the context says it's money), and Bangla spells out
+ * হাজার/লাখ because the short "হা"/"লা" followed by ৳ reads as other words.
+ */
+export function formatCompact(value: number, locale: string): string {
+  return new Intl.NumberFormat(tag(locale), {
+    notation: "compact",
+    compactDisplay: locale === "bn" ? "long" : "short",
+    maximumFractionDigits: 1,
   }).format(value);
 }
 

@@ -103,7 +103,9 @@ function BudgetRow({ row, monthProgress }: { row: BudgetRowData; monthProgress: 
   const locale = useLocale();
   const { currency, categoryById } = useApp();
   const label = useCategoryLabel();
-  const [value, setValue] = useState(row.budget === null ? "" : String(row.budget));
+  // Shown grouped in the UI's digits ("৬০,০০০"); normalizeAmount() reads that back.
+  const display = (v: number | null) => (v === null ? "" : formatNumber(v, locale, 2));
+  const [value, setValue] = useState(display(row.budget));
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const money = (v: number) => formatMoney(v, currency, locale);
@@ -113,8 +115,9 @@ function BudgetRow({ row, monthProgress }: { row: BudgetRowData; monthProgress: 
 
   function save(next: string) {
     const normalized = normalizeAmount(next);
-    if (normalized === (row.budget === null ? "" : String(row.budget))) return;
+    // Clear any earlier error first: going back to the saved value is valid too.
     setError(null);
+    if (normalized === (row.budget === null ? "" : String(row.budget))) return;
     startTransition(async () => {
       const res = await setBudget(row.categoryId, normalized === "" ? null : normalized);
       if (!res.ok) {
@@ -164,12 +167,14 @@ function BudgetRow({ row, monthProgress }: { row: BudgetRowData; monthProgress: 
               variant="ghost"
               size="sm"
               onClick={() => {
-                setValue(String(row.suggestion));
+                setValue(display(row.suggestion));
                 save(String(row.suggestion));
               }}
               disabled={pending}
               title={t("useSuggestion")}
+              className="rounded-full border border-dashed border-primary/40 bg-primary-soft/60 text-primary hover:bg-primary-soft hover:text-primary"
             >
+              <Sparkles className="size-3.5" aria-hidden />
               {t("suggest", { amount: money(row.suggestion) })}
             </Button>
           )}
@@ -179,7 +184,12 @@ function BudgetRow({ row, monthProgress }: { row: BudgetRowData; monthProgress: 
             placeholder={t("noLimit")}
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            onBlur={(e) => save(e.target.value)}
+            onBlur={(e) => {
+              save(e.target.value);
+              // Re-group what was typed ("60000" → "৬০,০০০") unless it's invalid.
+              const n = Number(normalizeAmount(e.target.value));
+              if (e.target.value.trim() && Number.isFinite(n) && n > 0) setValue(display(n));
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") (e.target as HTMLInputElement).blur();
             }}

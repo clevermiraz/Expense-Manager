@@ -2,13 +2,13 @@
 
 import { useLocale } from "next-intl";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { formatMoney } from "@/lib/format";
+import { formatCompact, formatMoney } from "@/lib/format";
 
 export type BarDatum = { key: string; tick: string; label: string; value: number; muted?: boolean };
 
 /**
  * Single-series bar chart (one color, slot 1). Hover shows the exact value;
- * the y axis uses compact money ticks. `muted` bars (e.g. a partial month)
+ * the y axis uses compact ticks. `muted` bars (e.g. a partial month)
  * render at reduced opacity.
  */
 export function SpendBarChart({
@@ -37,11 +37,11 @@ export function SpendBarChart({
             minTickGap={6}
           />
           <YAxis
-            width={56}
+            width={locale === "bn" ? 64 : 48}
             tickLine={false}
             axisLine={false}
             tick={{ fill: "var(--chart-axis)", fontSize: 11 }}
-            tickFormatter={(v: number) => formatMoney(v, currency, locale, { compact: true })}
+            tickFormatter={(v: number) => formatCompact(v, locale)}
             allowDecimals={false}
           />
           <Tooltip

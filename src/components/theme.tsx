@@ -67,7 +67,7 @@ export function ThemeSwitcher({ showLabels = true }: { showLabels?: boolean }) {
           aria-label={showLabels ? undefined : t(value)}
           title={t(value)}
           onClick={() => setTheme(value)}
-          className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
+          className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs max-sm:py-2.5 font-medium transition-colors cursor-pointer ${
             theme === value ? "bg-primary text-white" : "text-ink-2 hover:bg-muted"
           }`}
         >

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { HorizontalScroller } from "@/components/charts/horizontal-scroller";
 
 // Six-step sequential blue ramp; the steps live in globals.css (--heat-1..6)
 // so light and dark mode each get their own validated steps.
@@ -30,8 +31,9 @@ export function HeatmapTable({
 }) {
   const max = Math.max(0, ...rows.flatMap((r) => r.values));
   return (
-    <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
-      <table className="w-full min-w-[560px] border-separate border-spacing-[2px] text-sm">
+    // Opens scrolled to the latest month; the category column stays pinned.
+    <HorizontalScroller className="-mx-4 px-4 sm:mx-0 sm:px-0">
+      <table className="w-full border-separate border-spacing-[2px] text-sm">
         <caption className="sr-only">{caption}</caption>
         <thead>
           <tr>
@@ -51,7 +53,10 @@ export function HeatmapTable({
         <tbody>
           {rows.map((r) => (
             <tr key={r.id}>
-              <th scope="row" className="sticky left-0 z-10 bg-surface px-2 py-1.5 text-left font-medium text-ink whitespace-nowrap">
+              <th
+                scope="row"
+                className="sticky left-0 z-10 max-w-32 bg-surface px-2 py-1.5 text-left font-medium text-ink whitespace-nowrap sm:max-w-none"
+              >
                 {r.label}
               </th>
               {r.values.map((v, i) => (
@@ -68,6 +73,6 @@ export function HeatmapTable({
           ))}
         </tbody>
       </table>
-    </div>
+    </HorizontalScroller>
   );
 }

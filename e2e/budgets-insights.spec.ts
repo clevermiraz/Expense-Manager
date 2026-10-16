@@ -27,7 +27,7 @@ test("budget suggestions come from the last 3 months and track this month", asyn
 
   await page.getByRole("button", { name: "Apply 2 suggestions" }).click();
   await expect(page.getByText("2 budgets set")).toBeVisible();
-  await expect(groceries.getByRole("textbox")).toHaveValue("3300");
+  await expect(groceries.getByRole("textbox")).toHaveValue("3,300");
   await expect(food.getByRole("textbox")).toHaveValue("740");
 
   // Spend this month and check statuses.
@@ -52,7 +52,8 @@ test("budget suggestions come from the last 3 months and track this month", asyn
   await expect(page.getByText("Budget removed for Total per month")).toBeVisible();
   // Falls back to the sum of category budgets (3300 + 740).
   await page.goto("/dashboard");
-  await expect(page.getByTestId("stat-budget-value")).toHaveText("-৳60");
+  await expect(page.getByTestId("stat-budget-value")).toHaveText("৳60");
+  await expect(page.getByTestId("stat-budget").getByText("Over budget by")).toBeVisible();
 });
 
 test("budget input is validated", async ({ page }) => {
@@ -88,7 +89,9 @@ test("insights show monthly averages and where money goes", async ({ page }) => 
 
   await page.getByRole("link", { name: "12 months" }).click();
   await expect(page).toHaveURL(/range=12/);
-  await expect(table.getByRole("columnheader")).toHaveCount(14);
+  // Columns start at the first month with data (3 months back), not 12 empty
+  // months: category + 4 months + average.
+  await expect(table.getByRole("columnheader")).toHaveCount(6);
 });
 
 test("dashboard flags categories running above their usual level", async ({ page }) => {

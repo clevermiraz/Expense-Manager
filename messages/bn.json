@@ -15,7 +15,9 @@
     "budgets": "বাজেট",
     "settings": "সেটিংস",
     "signOut": "লগ আউট",
-    "addExpense": "খরচ যোগ করুন"
+    "addExpense": "খরচ যোগ করুন",
+    "account": "অ্যাকাউন্ট",
+    "openAccount": "অ্যাকাউন্ট মেনু খুলুন"
   },
   "categories": {
     "food": "খাবার ও রেস্টুরেন্ট",
@@ -37,7 +39,8 @@
     "cash": "নগদ",
     "card": "কার্ড",
     "mobile_banking": "মোবাইল ব্যাংকিং",
-    "bank": "ব্যাংক ট্রান্সফার"
+    "bank": "ব্যাংক ট্রান্সফার",
+    "baki": "বাকি"
   },
   "expenseForm": {
     "addTitle": "খরচ যোগ করুন",
@@ -54,7 +57,8 @@
     "confirmDelete": "মুছতে আবার চাপুন",
     "saved": "খরচ যোগ হয়েছে",
     "updated": "খরচ আপডেট হয়েছে",
-    "deleted": "খরচ মুছে ফেলা হয়েছে"
+    "deleted": "খরচ মুছে ফেলা হয়েছে",
+    "bakiHint": "তালিকায় বাকি হিসেবে চিহ্নিত থাকবে, যাতে পরে পরিশোধ করতে মনে থাকে।"
   },
   "errors": {
     "generic": "কিছু একটা সমস্যা হয়েছে। আবার চেষ্টা করুন।",
@@ -76,7 +80,8 @@
     "iconInvalid": "একটি আইকন বেছে নিন।",
     "currencyInvalid": "একটি মুদ্রা বেছে নিন।",
     "timezoneInvalid": "সঠিক টাইম জোন বেছে নিন।",
-    "cannotDeleteOther": "\"অন্যান্য\" ক্যাটাগরি মোছা যায় না।"
+    "cannotDeleteOther": "\"অন্যান্য\" ক্যাটাগরি মোছা যায় না।",
+    "amountRequired": "পরিমাণ লিখুন।"
   },
   "auth": {
     "loginTitle": "আবার স্বাগতম",
@@ -153,7 +158,8 @@
     "budgets": "বাজেট",
     "manage": "পরিচালনা",
     "noBudgets": "এখনও কোনো ক্যাটাগরি বাজেট নেই। সীমার কাছে পৌঁছালে সতর্কতা পেতে বাজেট ঠিক করুন।",
-    "moreBudgets": "{count, plural, other {বাজেট পেজে আরও #টি বাজেট}}"
+    "moreBudgets": "{count, plural, other {বাজেট পেজে আরও #টি বাজেট}}",
+    "overBudgetBy": "বাজেটের চেয়ে বেশি খরচ"
   },
   "expenses": {
     "title": "খরচসমূহ",
@@ -276,7 +282,17 @@
     "categorySaved": "ক্যাটাগরি সংরক্ষিত",
     "deleteCategory": "মুছুন",
     "confirmDeleteCategory": "আবার চাপুন: খরচগুলো \"অন্যান্য\"-তে যাবে",
-    "categoryDeleted": "ক্যাটাগরি মুছে ফেলা হয়েছে"
+    "categoryDeleted": "ক্যাটাগরি মুছে ফেলা হয়েছে",
+    "account": "অ্যাকাউন্ট",
+    "dangerZone": "অ্যাকাউন্ট মুছে ফেলুন",
+    "dangerHint": "আপনার অ্যাকাউন্টের সাথে সব খরচ, বাজেট ও ক্যাটাগরি চিরতরে মুছে যাবে। এটি আর ফেরানো যাবে না।",
+    "deleteAccount": "আমার অ্যাকাউন্ট মুছুন",
+    "deleteConfirmTitle": "অ্যাকাউন্ট মুছে ফেলবেন?",
+    "deleteConfirmBody": "{email}-এর সব তথ্য চিরতরে মুছে যাবে। চাইলে আগে খরচগুলো ডাউনলোড করে রাখুন।",
+    "deletePasswordLabel": "নিশ্চিত করতে পাসওয়ার্ড দিন",
+    "deleteConfirmButton": "চিরতরে মুছুন",
+    "cancel": "বাতিল",
+    "incorrectPassword": "পাসওয়ার্ড ভুল।"
   },
   "install": {
     "title": "{app} ইনস্টল করুন",

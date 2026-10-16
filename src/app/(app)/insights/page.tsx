@@ -11,7 +11,7 @@ import { Card, CardHeader, EmptyState } from "@/components/ui/card";
 import { categoryLabel } from "@/lib/category-label";
 import { getCategories, getCategoryMonthMatrix, getFirstExpenseMonth, getWeekdayTotals } from "@/lib/data";
 import { monthOf, monthsEndingAt } from "@/lib/dates";
-import { formatMoney, formatMonth, formatMonthName, formatPercent, formatWeekday } from "@/lib/format";
+import { formatCompact, formatMoney, formatMonth, formatMonthName, formatPercent, formatWeekday } from "@/lib/format";
 import { requireUser, userToday } from "@/lib/session";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -40,7 +40,7 @@ export default async function InsightsPage({ searchParams }: PageProps<"/insight
 
   // Everything on this page is a sum or an average: show whole amounts.
   const money = (v: number) => formatMoney(v, user.currency, locale, { whole: true });
-  const compact = (v: number) => formatMoney(v, user.currency, locale, { compact: true });
+  const compact = (v: number) => formatCompact(v, locale);
 
   const header = (
     <PageHeader
@@ -113,6 +113,10 @@ export default async function InsightsPage({ searchParams }: PageProps<"/insight
     .sort((a, b) => b.total - a.total);
   const top = catRows[0];
   const top3Share = catRows.slice(0, 3).reduce((s, r) => s + r.total, 0) / Math.max(1, rangeTotal);
+
+  // The table starts at the first month with any expense; earlier columns would be all "–".
+  const heatStart = Math.max(0, months.findIndex((m) => m >= firstMonth));
+  const heatMonths = months.slice(heatStart);
 
   const trend = months.map((m) => ({
     key: m,
@@ -192,7 +196,7 @@ export default async function InsightsPage({ searchParams }: PageProps<"/insight
           caption={t("whereMoneyGoes")}
           categoryLabel={t("category")}
           averageLabel={t("avgPerMonth")}
-          columns={months.map((m) => ({
+          columns={heatMonths.map((m) => ({
             key: m,
             label: m === currentMonth ? `${formatMonth(m, locale, "short")}*` : formatMonth(m, locale, "short"),
           }))}
@@ -201,14 +205,14 @@ export default async function InsightsPage({ searchParams }: PageProps<"/insight
             return {
               id: r.categoryId,
               label: (
-                <span className="flex items-center gap-2">
+                <span className="flex min-w-0 items-center gap-2">
                   {c && <CategoryIcon icon={c.icon} color={c.color} size="sm" />}
-                  {categoryLabel(c, tc)}
+                  <span className="truncate">{categoryLabel(c, tc)}</span>
                 </span>
               ),
-              values: r.values,
+              values: r.values.slice(heatStart),
               total: r.total,
-              average: money(r.avg),
+              average: r.avg > 0 ? money(r.avg) : "–",
             };
           })}
           format={compact}

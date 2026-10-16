@@ -35,7 +35,8 @@ export const DEFAULT_CATEGORIES: { key: CategoryKey; icon: string; color: string
 // category is deleted, so it can never be removed itself.
 export const FALLBACK_CATEGORY_KEY: CategoryKey = "other";
 
-export const PAYMENT_METHODS = ["cash", "card", "mobile_banking", "bank"] as const;
+// "baki": bought on credit, still owed (common at local shops).
+export const PAYMENT_METHODS = ["cash", "card", "mobile_banking", "bank", "baki"] as const;
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
 export const CURRENCIES = ["BDT", "USD", "EUR", "GBP", "INR"] as const;

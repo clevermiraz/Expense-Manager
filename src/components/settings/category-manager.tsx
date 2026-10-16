@@ -8,7 +8,7 @@ import { createCategory, deleteCategory, updateCategory } from "@/app/actions/ca
 import { useApp, useCategoryLabel } from "@/components/app-context";
 import { CATEGORY_COLORS, CATEGORY_ICONS, CategoryIcon } from "@/components/category-icon";
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogBody } from "@/components/ui/dialog";
 import { Field, Input } from "@/components/ui/field";
 import { toast } from "@/components/ui/toast";
 import type { Category } from "@/lib/data";
@@ -33,7 +33,7 @@ export function CategoryManager() {
               type="button"
               onClick={() => setEditing(c)}
               aria-label={t("editCategory", { name: label(c) })}
-              className="rounded-lg p-1.5 text-ink-3 hover:bg-surface hover:text-ink cursor-pointer"
+              className="rounded-lg p-1.5 text-ink-3 hover:bg-surface hover:text-ink cursor-pointer max-sm:p-2.5"
             >
               <Pencil className="size-4" />
             </button>
@@ -51,11 +51,13 @@ export function CategoryManager() {
         closeLabel={tc("close")}
       >
         {editing !== null && (
-          <CategoryForm
-            key={editing === "new" ? "new" : editing.id}
-            category={editing === "new" ? null : editing}
-            onDone={() => setEditing(null)}
-          />
+          <DialogBody>
+            <CategoryForm
+              key={editing === "new" ? "new" : editing.id}
+              category={editing === "new" ? null : editing}
+              onDone={() => setEditing(null)}
+            />
+          </DialogBody>
         )}
       </Dialog>
     </>

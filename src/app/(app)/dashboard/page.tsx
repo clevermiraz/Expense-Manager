@@ -56,6 +56,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
 
   const categoryBudgetTotal = [...budgets.byCategory.values()].reduce((s, v) => s + v, 0);
   const budgetLimit = budgets.overall ?? (categoryBudgetTotal > 0 ? categoryBudgetTotal : null);
+  const overBudget = budgetLimit !== null && summary.total > budgetLimit;
 
   // Daily chart: every day of the month, zero-filled.
   const byDay = new Map(summary.byDay.map((d) => [d.day, d.total]));
@@ -136,11 +137,20 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
         <StatTile
           testId="stat-budget"
           className="col-span-2 lg:col-span-1"
-          label={t("budgetLeft")}
-          value={budgetLimit === null ? "—" : money(budgetLimit - summary.total)}
+          // Over budget reads as "Over budget by ৳X" in red, never a negative "left".
+          label={overBudget ? t("overBudgetBy") : t("budgetLeft")}
+          value={
+            budgetLimit === null ? (
+              "—"
+            ) : overBudget ? (
+              <span className="text-danger">{money(summary.total - budgetLimit)}</span>
+            ) : (
+              money(budgetLimit - summary.total)
+            )
+          }
           footer={
             budgetLimit === null ? (
-              <Link href="/budgets" className="font-medium text-primary hover:underline">
+              <Link href="/budgets" className="-m-2 inline-block p-2 font-medium text-primary hover:underline">
                 {t("setBudget")}
               </Link>
             ) : (
@@ -214,7 +224,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
               <CardHeader
                 title={t("byCategory")}
                 action={
-                  <Link href={`/insights`} className="text-sm font-medium text-primary hover:underline">
+                  <Link href={`/insights`} className="-m-2 p-2 text-sm font-medium text-primary hover:underline">
                     {t("seeTrends")}
                   </Link>
                 }
@@ -245,7 +255,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
               <CardHeader
                 title={t("recent")}
                 action={
-                  <Link href={`/expenses?month=${month}`} className="text-sm font-medium text-primary hover:underline">
+                  <Link href={`/expenses?month=${month}`} className="-m-2 p-2 text-sm font-medium text-primary hover:underline">
                     {t("viewAll")}
                   </Link>
                 }
@@ -257,7 +267,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
               <CardHeader
                 title={t("budgets")}
                 action={
-                  <Link href="/budgets" className="text-sm font-medium text-primary hover:underline">
+                  <Link href="/budgets" className="-m-2 p-2 text-sm font-medium text-primary hover:underline">
                     {t("manage")}
                   </Link>
                 }

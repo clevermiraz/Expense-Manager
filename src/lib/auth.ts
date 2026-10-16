@@ -1,5 +1,6 @@
 import "server-only";
 import { betterAuth } from "better-auth";
+import { eq } from "drizzle-orm";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { db, schema } from "@/db";
@@ -31,6 +32,20 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24,
   },
   user: {
+    // Settings → Delete account. The client always sends the password, which
+    // Better Auth verifies before deleting.
+    deleteUser: {
+      enabled: true,
+      // expense → category is ON DELETE RESTRICT, so the user-level cascade can
+      // fail depending on row order. Remove the user's data explicitly first.
+      beforeDelete: async (u) => {
+        await db.transaction(async (tx) => {
+          await tx.delete(schema.expense).where(eq(schema.expense.userId, u.id));
+          await tx.delete(schema.budget).where(eq(schema.budget.userId, u.id));
+          await tx.delete(schema.category).where(eq(schema.category.userId, u.id));
+        });
+      },
+    },
     additionalFields: {
       currency: { type: "string", required: false, defaultValue: "BDT", input: false },
       timezone: { type: "string", required: false, defaultValue: "Asia/Dhaka", input: true },
