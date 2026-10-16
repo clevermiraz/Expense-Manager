@@ -49,7 +49,7 @@ export type ExpenseRow = {
 
 export async function getExpenses(
   userId: string,
-  opts: { month: string; categoryId?: string; q?: string },
+  opts: { month: string; categoryId?: string; q?: string; paymentMethod?: string },
 ): Promise<ExpenseRow[]> {
   const { start, end } = monthRange(opts.month);
   const conditions = [
@@ -58,6 +58,7 @@ export async function getExpenses(
     lt(expense.spentOn, end),
   ];
   if (opts.categoryId) conditions.push(eq(expense.categoryId, opts.categoryId));
+  if (opts.paymentMethod) conditions.push(eq(expense.paymentMethod, opts.paymentMethod));
   if (opts.q) {
     const escaped = opts.q.replace(/[\\%_]/g, (c) => `\\${c}`);
     conditions.push(ilike(expense.note, `%${escaped}%`));

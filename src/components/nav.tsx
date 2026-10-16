@@ -17,14 +17,24 @@ const ITEMS = [
   { href: "/settings", key: "settings", icon: Settings },
 ] as const;
 
+/**
+ * Which tab is highlighted. A tapped tab lights up right away, before its page
+ * has loaded, so the app answers the tap instantly.
+ */
 function useActive() {
   const pathname = usePathname();
-  return (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  const [tapped, setTapped] = useState<{ href: string; from: string } | null>(null);
+  // Forget the tap once we've arrived (or moved on some other way).
+  const current = tapped && tapped.from === pathname ? tapped.href : null;
+  const isActive = (href: string) =>
+    current ? current === href : pathname === href || pathname.startsWith(`${href}/`);
+  const onTap = (href: string) => setTapped({ href, from: pathname });
+  return { isActive, onTap };
 }
 
 export function SidebarNav() {
   const t = useTranslations("nav");
-  const isActive = useActive();
+  const { isActive, onTap } = useActive();
   const { openExpense } = useApp();
   return (
     <nav aria-label={t("main")} className="flex flex-col gap-1">
@@ -40,6 +50,7 @@ export function SidebarNav() {
         <Link
           key={href}
           href={href}
+          onClick={() => onTap(href)}
           aria-current={isActive(href) ? "page" : undefined}
           className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
             isActive(href) ? "bg-primary-soft text-primary" : "text-ink-2 hover:bg-muted hover:text-ink"
@@ -55,7 +66,7 @@ export function SidebarNav() {
 
 export function BottomNav() {
   const t = useTranslations("nav");
-  const isActive = useActive();
+  const { isActive, onTap } = useActive();
   const { openExpense } = useApp();
   const left = ITEMS.slice(0, 2);
   const right = ITEMS.slice(2, 4);
@@ -63,6 +74,7 @@ export function BottomNav() {
     <Link
       key={href}
       href={href}
+      onClick={() => onTap(href)}
       aria-current={isActive(href) ? "page" : undefined}
       className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 py-1 text-[11px] font-medium transition-colors ${
         isActive(href) ? "text-primary" : "text-ink-3"

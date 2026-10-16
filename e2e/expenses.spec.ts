@@ -111,6 +111,36 @@ test("filter by category and search notes", async ({ page }) => {
   await expect(page.getByText("Bus 100% fare")).toBeVisible();
 });
 
+test("filter by how it was paid, e.g. baki", async ({ page }) => {
+  await addExpense(page, { amount: "500", category: "Groceries", method: "Baki (pay later)" });
+  await addExpense(page, { amount: "250", category: "Health", method: "Baki (pay later)" });
+  await addExpense(page, { amount: "90", category: "Transport", method: "Card" });
+  await addExpense(page, { amount: "40", category: "Transport" });
+  await page.goto("/expenses");
+  const paid = page.getByRole("radiogroup", { name: "Filter by how it was paid" });
+  await expect(paid.getByRole("radio", { name: "All" })).toHaveAttribute("aria-checked", "true");
+
+  await paid.getByRole("radio", { name: "Baki (pay later)" }).click();
+  await expect(page).toHaveURL(/paid=baki/);
+  await expect(page.getByTestId("expense-row")).toHaveCount(2);
+  await expect(page.getByText("Still to pay (baki)")).toBeVisible();
+  await expect(page.getByTestId("list-total")).toHaveText("৳750");
+
+  // Combines with the category filter.
+  await page.getByLabel("Filter by category").selectOption({ label: "Health" });
+  await expect(page.getByTestId("expense-row")).toHaveCount(1);
+  await expect(page.getByTestId("list-total")).toHaveText("৳250");
+  await page.getByLabel("Filter by category").selectOption({ label: "All categories" });
+
+  await paid.getByRole("radio", { name: "Card" }).click();
+  await expect(page).toHaveURL(/paid=card/);
+  await expect(page.getByTestId("list-total")).toHaveText("৳90");
+  // Tapping the active chip again clears it.
+  await paid.getByRole("radio", { name: "Card" }).click();
+  await expect(page.getByTestId("expense-row")).toHaveCount(4);
+  await expect(paid.getByRole("radio", { name: "All" })).toHaveAttribute("aria-checked", "true");
+});
+
 test("month switcher moves between months and blocks the future", async ({ page }) => {
   const prev = shiftMonth(currentMonth(), -1);
   await addExpense(page, { amount: "70", category: "Health", date: `${prev}-15` });

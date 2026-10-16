@@ -142,10 +142,34 @@ dialog.sheet[open]::backdrop {
 .toast-in {
   animation: toast-in 0.2s ease-out;
 }
+/* Blinking caret after the keypad amount. */
+@keyframes caret-blink {
+  50% { opacity: 0; }
+}
+.caret {
+  animation: caret-blink 1s step-end infinite;
+}
+/* Step-by-step sheet: the next step slides in from the side it comes from. */
+@keyframes step-next {
+  from { opacity: 0; transform: translateX(1.25rem); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes step-back {
+  from { opacity: 0; transform: translateX(-1.25rem); }
+  to { opacity: 1; transform: none; }
+}
+.step-next {
+  animation: step-next 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.step-back {
+  animation: step-back 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
 @media (prefers-reduced-motion: reduce) {
   dialog.sheet[open],
   dialog.sheet[open]::backdrop,
-  .toast-in {
+  .toast-in,
+  .step-next,
+  .step-back {
     animation: none;
   }
 }

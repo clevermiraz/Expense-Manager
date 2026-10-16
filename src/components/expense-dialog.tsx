@@ -1,34 +1,45 @@
 "use client";
 
 import { HandCoins, Trash2 } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
-import { useErrorText } from "@/lib/use-error-text";
-import { useMemo, useRef, useState, useTransition } from "react";
-import { deleteExpense, saveExpense } from "@/app/actions/expenses";
-import { useApp, useCategoryLabel } from "@/components/app-context";
+import { useTranslations } from "next-intl";
+import { useRef } from "react";
+import { useApp, useCategoryLabel, useCurrencySymbol } from "@/components/app-context";
 import { CategoryIcon } from "@/components/category-icon";
+import { useExpenseDraft, type ExpenseDefaults } from "@/components/expense-draft";
+import { ExpenseWizard } from "@/components/expense-wizard";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogBody, DialogFooter } from "@/components/ui/dialog";
 import { Field, Input, inputClass } from "@/components/ui/field";
-import { toast } from "@/components/ui/toast";
 import type { ExpenseRow } from "@/lib/data";
 import { PAYMENT_METHODS, type PaymentMethod } from "@/lib/default-categories";
-import { intlLocale, isLocale } from "@/i18n/config";
-import { normalizeAmount } from "@/lib/numbers";
+import { useIsPhone } from "@/lib/use-media";
 
 type Props = {
   open: boolean;
   expense: ExpenseRow | null;
-  defaults?: { spentOn?: string; categoryId?: string };
+  defaults?: ExpenseDefaults;
   onClose: () => void;
 };
 
 export function ExpenseDialog({ open, expense, defaults, onClose }: Props) {
   const t = useTranslations("expenseForm");
   const tc = useTranslations("common");
+  // Phones get the step-by-step sheet with its own keypad; wider screens keep
+  // the single form, where a real keyboard makes one page faster.
+  const phone = useIsPhone();
+  const key = `${expense?.id ?? "new"}-${open}`;
   return (
-    <Dialog open={open} onClose={onClose} title={expense ? t("editTitle") : t("addTitle")} closeLabel={tc("close")}>
-      <ExpenseForm key={`${expense?.id ?? "new"}-${open}`} expense={expense} defaults={defaults} onDone={onClose} />
+    <Dialog
+      open={open}
+      onClose={onClose}
+      title={phone ? undefined : expense ? t("editTitle") : t("addTitle")}
+      closeLabel={tc("close")}
+    >
+      {phone ? (
+        <ExpenseWizard key={key} expense={expense} defaults={defaults} onDone={onClose} />
+      ) : (
+        <ExpenseForm key={key} expense={expense} defaults={defaults} onDone={onClose} />
+      )}
     </Dialog>
   );
 }
@@ -39,81 +50,36 @@ function ExpenseForm({
   onDone,
 }: {
   expense: ExpenseRow | null;
-  defaults?: { spentOn?: string; categoryId?: string };
+  defaults?: ExpenseDefaults;
   onDone: () => void;
 }) {
   const t = useTranslations("expenseForm");
-  const te = useErrorText();
   const tp = useTranslations("paymentMethods");
-  const { categories, today, currency } = useApp();
+  const { categories, currency } = useApp();
   const label = useCategoryLabel();
   const amountRef = useRef<HTMLInputElement>(null);
-  const locale = useLocale();
-  // e.g. "৳" for BDT, shown inside the amount field
-  const symbol = useMemo(
-    () =>
-      new Intl.NumberFormat(isLocale(locale) ? intlLocale[locale] : locale, {
-        style: "currency",
-        currency,
-        // "৳" rather than "BDT" in English, so it fits inside the field
-        currencyDisplay: "narrowSymbol",
-      })
-        .formatToParts(0)
-        .find((p) => p.type === "currency")?.value ?? currency,
-    [locale, currency],
-  );
-
-  const [amount, setAmount] = useState(expense ? String(expense.amount) : "");
-  const [categoryId, setCategoryId] = useState(expense?.categoryId ?? defaults?.categoryId ?? categories[0]?.id ?? "");
-  const [spentOn, setSpentOn] = useState(expense?.spentOn ?? defaults?.spentOn ?? today);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
-    (expense?.paymentMethod as PaymentMethod) ?? "cash",
-  );
-  const [note, setNote] = useState(expense?.note ?? "");
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [pending, startTransition] = useTransition();
-  const [deleting, startDelete] = useTransition();
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
-
-  function submit(addAnother: boolean) {
-    if (normalizeAmount(amount) === "") return setErrors({ amount: "amountRequired" });
-    setErrors({});
-    startTransition(async () => {
-      const res = await saveExpense(expense?.id ?? null, {
-        amount: normalizeAmount(amount),
-        categoryId,
-        spentOn,
-        note,
-        paymentMethod,
-      });
-      if (!res.ok) {
-        if (res.fields) setErrors(res.fields);
-        else toast(te(res.error), "error");
-        return;
-      }
-      toast(expense ? t("updated") : t("saved"));
-      if (addAnother) {
-        setAmount("");
-        setNote("");
-        amountRef.current?.focus();
-      } else {
-        onDone();
-      }
-    });
-  }
-
-  function remove() {
-    if (!expense) return;
-    if (!confirmingDelete) return setConfirmingDelete(true);
-    startDelete(async () => {
-      const res = await deleteExpense(expense.id);
-      if (!res.ok) return toast(te(res.error), "error");
-      toast(t("deleted"));
-      onDone();
-    });
-  }
-
-  const err = (k: string) => (errors[k] ? te(errors[k]) : null);
+  const symbol = useCurrencySymbol();
+  const draft = useExpenseDraft(expense, defaults, onDone);
+  const {
+    amount,
+    setAmount,
+    categoryId,
+    setCategoryId,
+    spentOn,
+    setSpentOn,
+    paymentMethod,
+    setPaymentMethod,
+    note,
+    setNote,
+    errors,
+    err,
+    pending,
+    deleting,
+    confirmingDelete,
+    remove,
+  } = draft;
+  const submit = (addAnother: boolean) =>
+    draft.submit(addAnother, { onAddAnother: () => amountRef.current?.focus() });
 
   return (
     <form

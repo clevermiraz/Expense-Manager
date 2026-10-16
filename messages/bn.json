@@ -58,7 +58,24 @@
     "saved": "খরচ যোগ হয়েছে",
     "updated": "খরচ আপডেট হয়েছে",
     "deleted": "খরচ মুছে ফেলা হয়েছে",
-    "bakiHint": "তালিকায় বাকি হিসেবে চিহ্নিত থাকবে, যাতে পরে পরিশোধ করতে মনে থাকে।"
+    "bakiHint": "তালিকায় বাকি হিসেবে চিহ্নিত থাকবে, যাতে পরে পরিশোধ করতে মনে থাকে।",
+    "stepOf": "ধাপ {step}/{total} · {name}",
+    "stepAmount": "পরিমাণ",
+    "stepCategory": "ক্যাটাগরি",
+    "stepDetails": "বিস্তারিত",
+    "amountPrompt": "কত টাকা খরচ হলো?",
+    "categoryPrompt": "কিসের জন্য খরচ?",
+    "next": "পরবর্তী",
+    "done": "ঠিক আছে",
+    "back": "পিছনে",
+    "backspace": "শেষ সংখ্যা মুছুন",
+    "decimalPoint": "দশমিক",
+    "changeAmount": "পরিমাণ বদলান",
+    "changeCategory": "ক্যাটাগরি বদলান",
+    "today": "আজ",
+    "yesterday": "গতকাল",
+    "otherDay": "অন্য দিন",
+    "optional": "ঐচ্ছিক"
   },
   "errors": {
     "generic": "কিছু একটা সমস্যা হয়েছে। আবার চেষ্টা করুন।",
@@ -176,7 +193,10 @@
     "add": "খরচ যোগ করুন",
     "today": "আজ",
     "yesterday": "গতকাল",
-    "editItem": "{category}-এর {amount} খরচ সম্পাদনা করুন"
+    "editItem": "{category}-এর {amount} খরচ সম্পাদনা করুন",
+    "filterPaid": "পরিশোধের মাধ্যম অনুযায়ী ফিল্টার",
+    "allMethods": "সব",
+    "bakiTotal": "পরিশোধ বাকি"
   },
   "export": {
     "date": "তারিখ",

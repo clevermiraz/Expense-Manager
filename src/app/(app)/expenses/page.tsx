@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/page-header";
 import { buttonClass } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getExpenses } from "@/lib/data";
+import { PAYMENT_METHODS } from "@/lib/default-categories";
 import { monthOf, resolveMonth } from "@/lib/dates";
 import { formatMoney, formatNumber } from "@/lib/format";
 import { requireUser, userToday } from "@/lib/session";
@@ -27,14 +28,15 @@ export default async function ExpensesPage({ searchParams }: PageProps<"/expense
   const month = resolveMonth(sp.month, currentMonth);
   const categoryId = typeof sp.category === "string" && UUID_RE.test(sp.category) ? sp.category : undefined;
   const q = typeof sp.q === "string" ? sp.q.trim().slice(0, 100) : undefined;
+  const paymentMethod = PAYMENT_METHODS.find((m) => m === sp.paid);
 
   const [expenses, t, locale] = await Promise.all([
-    getExpenses(user.id, { month, categoryId, q: q || undefined }),
+    getExpenses(user.id, { month, categoryId, q: q || undefined, paymentMethod }),
     getTranslations("expenses"),
     getLocale(),
   ]);
   const total = expenses.reduce((s, e) => s + e.amount, 0);
-  const filtered = !!categoryId || !!q;
+  const filtered = !!categoryId || !!q || !!paymentMethod;
 
   return (
     <>
@@ -55,7 +57,12 @@ export default async function ExpensesPage({ searchParams }: PageProps<"/expense
         <ExpenseFilters />
         <div className="my-4 flex items-baseline justify-between gap-3 rounded-xl bg-muted px-4 py-3">
           <span className="text-sm text-ink-2">
-            {filtered ? t("filteredTotal") : t("monthTotal")} ·{" "}
+            {paymentMethod === "baki" && !categoryId && !q
+              ? t("bakiTotal")
+              : filtered
+                ? t("filteredTotal")
+                : t("monthTotal")}{" "}
+            ·{" "}
             {t("entries", { count: expenses.length, n: formatNumber(expenses.length, locale) })}
           </span>
           <span className="text-lg font-semibold text-ink tabular" data-testid="list-total">

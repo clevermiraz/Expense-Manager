@@ -58,7 +58,24 @@
     "saved": "Expense added",
     "updated": "Expense updated",
     "deleted": "Expense deleted",
-    "bakiHint": "Marked as baki in your list, so you remember to pay it later."
+    "bakiHint": "Marked as baki in your list, so you remember to pay it later.",
+    "stepOf": "Step {step} of {total} · {name}",
+    "stepAmount": "Amount",
+    "stepCategory": "Category",
+    "stepDetails": "Details",
+    "amountPrompt": "How much did you spend?",
+    "categoryPrompt": "What was it for?",
+    "next": "Next",
+    "done": "Done",
+    "back": "Back",
+    "backspace": "Delete last digit",
+    "decimalPoint": "Decimal point",
+    "changeAmount": "Change amount",
+    "changeCategory": "Change category",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "otherDay": "Other day",
+    "optional": "optional"
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -176,7 +193,10 @@
     "add": "Add expense",
     "today": "Today",
     "yesterday": "Yesterday",
-    "editItem": "Edit {category} expense of {amount}"
+    "editItem": "Edit {category} expense of {amount}",
+    "filterPaid": "Filter by how it was paid",
+    "allMethods": "All",
+    "bakiTotal": "Still to pay (baki)"
   },
   "export": {
     "date": "Date",

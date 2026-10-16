@@ -1,10 +1,11 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { createContext, use, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Category, ExpenseRow } from "@/lib/data";
 import { ExpenseDialog } from "@/components/expense-dialog";
 import { Toaster } from "@/components/ui/toast";
+import { intlLocale, isLocale } from "@/i18n/config";
 
 type AppData = { categories: Category[]; currency: string; today: string };
 type AppContextValue = AppData & {
@@ -67,5 +68,22 @@ export function useCategoryLabel() {
   return useCallback(
     (c: Pick<Category, "key" | "name"> | undefined) => (c ? (c.key ? t(c.key) : (c.name ?? "")) : ""),
     [t],
+  );
+}
+
+/** The user's currency sign, e.g. "৳" for BDT (narrow, so "৳" not "BDT" in English). */
+export function useCurrencySymbol() {
+  const { currency } = useApp();
+  const locale = useLocale();
+  return useMemo(
+    () =>
+      new Intl.NumberFormat(isLocale(locale) ? intlLocale[locale] : locale, {
+        style: "currency",
+        currency,
+        currencyDisplay: "narrowSymbol",
+      })
+        .formatToParts(0)
+        .find((p) => p.type === "currency")?.value ?? currency,
+    [locale, currency],
   );
 }
