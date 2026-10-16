@@ -6,7 +6,7 @@ import { buttonClass } from "@/components/ui/button";
 import { blogPath, HIGHLIGHTS, whyPath } from "@/content/learn";
 import { pick, WHY } from "@/content/why";
 import { getCurrentUser } from "@/lib/session";
-import { SITE_URL } from "@/lib/site";
+import { OG_IMAGE, SITE_URL } from "@/lib/site";
 
 const ICONS = { zap: Zap, chart: ChartColumn, target: Target, handcoins: HandCoins, bell: BellRing, phone: Smartphone } as const;
 const languages = { bn: whyPath("bn"), en: whyPath("en"), "x-default": whyPath("bn") };
@@ -18,7 +18,14 @@ export function whyMetadata(locale: string): Metadata {
     title: { absolute: title },
     description,
     alternates: { canonical: whyPath(locale), languages },
-    openGraph: { type: "website", title, description, url: whyPath(locale), locale: locale === "en" ? "en_US" : "bn_BD" },
+    openGraph: {
+      type: "website",
+      title,
+      description,
+      url: whyPath(locale),
+      locale: locale === "en" ? "en_US" : "bn_BD",
+      images: [OG_IMAGE],
+    },
   };
 }
 

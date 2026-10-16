@@ -11,6 +11,7 @@ import { buttonClass } from "@/components/ui/button";
 import { ARTICLES, blogPath, HIGHLIGHTS, localized, whyPath } from "@/content/learn";
 import { formatMoney } from "@/lib/format";
 import { getCurrentUser } from "@/lib/session";
+import { OG_IMAGE } from "@/lib/site";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("landing");
@@ -18,7 +19,13 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { absolute: t("metaTitle") },
     description: t("metaDescription"),
     alternates: { canonical: "/" },
-    openGraph: { type: "website", title: t("metaTitle"), description: t("metaDescription"), url: "/" },
+    openGraph: {
+      type: "website",
+      title: t("metaTitle"),
+      description: t("metaDescription"),
+      url: "/",
+      images: [OG_IMAGE],
+    },
   };
 }
 

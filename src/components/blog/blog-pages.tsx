@@ -9,7 +9,7 @@ import { buttonClass } from "@/components/ui/button";
 import { ARTICLES, blogPath, getArticle, localized, type Article } from "@/content/learn";
 import { formatDay, formatNumber } from "@/lib/format";
 import { getCurrentUser } from "@/lib/session";
-import { SITE_URL } from "@/lib/site";
+import { OG_IMAGE, SITE_URL } from "@/lib/site";
 
 // "Why keep track" articles first, then the practical how-tos.
 const WHY = ["write-it-down", "pain-of-paying", "baki", "habit"];
@@ -36,6 +36,7 @@ export async function blogIndexMetadata(locale: string): Promise<Metadata> {
       description: t("metaDescription"),
       url: blogPath(locale),
       locale: ogLocale(locale),
+      images: [OG_IMAGE],
     },
   };
 }
@@ -56,6 +57,7 @@ export async function blogArticleMetadata(locale: string, slug: string): Promise
       locale: ogLocale(locale),
       publishedTime: article.published,
       modifiedTime: article.updated ?? article.published,
+      images: [OG_IMAGE],
     },
     twitter: { card: "summary", title: text.title, description: text.summary },
   };
