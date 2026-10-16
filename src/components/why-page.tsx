@@ -22,7 +22,7 @@ export function whyMetadata(locale: string): Metadata {
       type: "website",
       title,
       description,
-      url: whyPath(locale),
+      url: "/",
       locale: locale === "en" ? "en_US" : "bn_BD",
       images: [OG_IMAGE],
     },

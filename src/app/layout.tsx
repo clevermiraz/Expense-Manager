@@ -24,6 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       siteName: t("appName"),
       locale: locale === "en" ? "en_US" : "bn_BD",
+      url: "/",
       images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: t("appName") }],
     },
     // iOS / iPadOS home-screen app
