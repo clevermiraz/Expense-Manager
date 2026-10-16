@@ -31,7 +31,7 @@ export async function register(page: Page, name = "Test User", email = uniqueEma
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password", { exact: true }).fill(PASSWORD);
   await page.getByRole("button", { name: "Create account" }).click();
-  await expect(page).toHaveURL(/\/dashboard/);
+  await expect(page).toHaveURL(/\/dashboard/, { timeout: 30_000 }); // sign-up hashes the password: slow under parallel load
   return { name, email };
 }
 

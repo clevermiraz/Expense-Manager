@@ -37,7 +37,7 @@ test("register, see seeded categories, sign out, log back in", async ({ page }) 
   await expect(page).toHaveURL(/\/login/);
 
   await login(page, email);
-  await expect(page).toHaveURL(/\/dashboard/);
+  await expect(page).toHaveURL(/\/dashboard/, { timeout: 30_000 }); // sign-up hashes the password: slow under parallel load
 });
 
 test("duplicate email is rejected", async ({ page, browser }) => {
@@ -84,7 +84,7 @@ test("login honours ?next but never redirects off-site", async ({ page, browser 
 test("logged-in user visiting /login goes to dashboard", async ({ page }) => {
   await register(page);
   await page.goto("/login");
-  await expect(page).toHaveURL(/\/dashboard/);
+  await expect(page).toHaveURL(/\/dashboard/, { timeout: 30_000 }); // sign-up hashes the password: slow under parallel load
   await page.goto("/");
-  await expect(page).toHaveURL(/\/dashboard/);
+  await expect(page).toHaveURL(/\/dashboard/, { timeout: 30_000 }); // sign-up hashes the password: slow under parallel load
 });

@@ -162,28 +162,31 @@ export default async function InsightsPage({ searchParams }: PageProps<"/insight
         />
       </div>
 
-      <Card className="mt-4">
-        <div className="flex items-start gap-3 text-sm text-ink-2">
-          <Lightbulb className="mt-0.5 size-4 shrink-0 text-warn" aria-hidden />
-          <ul className="flex flex-col gap-1.5">
-            {top && (
-              <li>
-                {t("insightTop3", {
-                  pct: formatPercent(top3Share, locale),
-                  list: catRows
-                    .slice(0, 3)
-                    .map((r) => categoryLabel(catById.get(r.categoryId), tc))
-                    .join(", "),
-                })}
-              </li>
-            )}
-            {topWeekday.total > 0 && (
-              <li>{t("insightWeekday", { day: formatWeekday(topWeekday.dow, locale, "long") })}</li>
-            )}
-            <li>{t("insightBudget", { amount: money(avgMonthly) })}</li>
-          </ul>
-        </div>
-      </Card>
+      {/* Advice needs a full month behind it; one week of data can't say much. */}
+      {completeMonths.length > 0 && (
+        <Card className="mt-4">
+          <div className="flex items-start gap-3 text-sm text-ink-2">
+            <Lightbulb className="mt-0.5 size-4 shrink-0 text-warn" aria-hidden />
+            <ul className="flex flex-col gap-1.5">
+              {top && (
+                <li>
+                  {t("insightTop3", {
+                    pct: formatPercent(top3Share, locale),
+                    list: catRows
+                      .slice(0, 3)
+                      .map((r) => categoryLabel(catById.get(r.categoryId), tc))
+                      .join(", "),
+                  })}
+                </li>
+              )}
+              {topWeekday.total > 0 && (
+                <li>{t("insightWeekday", { day: formatWeekday(topWeekday.dow, locale, "long") })}</li>
+              )}
+              <li>{t("insightBudget", { amount: money(avgMonthly) })}</li>
+            </ul>
+          </div>
+        </Card>
+      )}
 
       <Card className="mt-4">
         <CardHeader title={t("monthlyTrend")} subtitle={t("monthlyTrendHint")} />

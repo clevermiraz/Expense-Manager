@@ -17,7 +17,8 @@
     "signOut": "Sign out",
     "addExpense": "Add expense",
     "account": "Account",
-    "openAccount": "Open account menu"
+    "openAccount": "Open account menu",
+    "learn": "Why Hisab?"
   },
   "categories": {
     "food": "Food & dining",
@@ -101,7 +102,8 @@
     "currencyInvalid": "Choose a currency.",
     "timezoneInvalid": "Choose a valid time zone.",
     "cannotDeleteOther": "The \"Other\" category can't be deleted.",
-    "amountRequired": "Enter an amount."
+    "amountRequired": "Enter an amount.",
+    "pushUnavailable": "Notifications aren't available on this device."
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -141,7 +143,17 @@
     "f3Title": "Budgets from real data",
     "f3Body": "Get budget suggestions from your last 3 months and watch your progress.",
     "f4Title": "English & বাংলা",
-    "f4Body": "Use the app in English or Bangla, switch any time."
+    "f4Body": "Use the app in English or Bangla, switch any time.",
+    "metaTitle": "Hisab: a simple expense tracker for your daily spending",
+    "metaDescription": "Log what you spend in seconds, see where your money goes, and set a monthly budget from your real numbers. Free, in Bangla and English, and works like an app on your phone.",
+    "whyTitle": "Why write your spending down?",
+    "whyBody": "It sounds too simple to matter. The research says otherwise.",
+    "whyMore": "Read why",
+    "guidesTitle": "Getting started",
+    "allPosts": "All articles",
+    "finalTitle": "Your first entry takes less than a minute",
+    "finalBody": "Free, no card needed. Start with today's tea and rickshaw.",
+    "whyLink": "Why use Hisab?"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -177,7 +189,7 @@
     "viewAll": "View all",
     "budgets": "Budgets",
     "manage": "Manage",
-    "noBudgets": "No category budgets yet. Set some to get alerts when you're close to the limit.",
+    "noBudgets": "No category budgets yet. Set a few and you'll see at a glance when one is getting close.",
     "moreBudgets": "{count, plural, one {+ # more budget on the Budgets page} other {+ # more budgets on the Budgets page}}",
     "overBudgetBy": "Over budget by"
   },
@@ -347,5 +359,75 @@
     "dark": "Dark",
     "system": "System",
     "toggle": "Switch light / dark mode"
+  },
+  "habit": {
+    "title": "Your logging streak",
+    "streak": "{n} {count, plural, one {day} other {days}} in a row",
+    "loggedToday": "Today's spending is logged. Nice!",
+    "notYet": "Nothing logged today yet. Keep your streak going.",
+    "start": "Start a streak today. It takes a minute.",
+    "addNow": "Add now",
+    "week": "Last 7 days",
+    "dayLogged": "{day}: logged",
+    "dayMissed": "{day}: nothing logged",
+    "remindAsk": "Forget sometimes? Get one gentle reminder at {time} if nothing's logged.",
+    "remindOn": "Turn on",
+    "notNow": "Not now",
+    "remindDone": "Reminder on. We'll nudge you at {time} if you forget."
+  },
+  "tip": {
+    "title": "Did you know?",
+    "more": "Read more"
+  },
+  "reminders": {
+    "streakTitle": "🔥 {n}-day streak",
+    "streakBody": "Log today's spending to keep it going. It takes a minute.",
+    "startedTitle": "Make it two days in a row",
+    "startedBody": "You logged yesterday. Add today's too and start a streak.",
+    "plainTitle": "Today's spending isn't logged yet",
+    "plainBody0": "Where did the money go today? Jot it down while you remember.",
+    "plainBody1": "Small expenses add up by month-end. One minute now saves the surprise.",
+    "plainBody2": "Once you write it down, you notice it. And what you notice, you change."
+  },
+  "reminderSettings": {
+    "title": "Daily reminder",
+    "hint": "If you haven't added anything by this time, you'll get one gentle notification. Never more than once a day.",
+    "time": "Remind me at",
+    "turnOn": "Turn on reminders",
+    "turnOff": "Turn off",
+    "test": "Send a test now",
+    "testSent": "Sent! Check your notifications.",
+    "enabled": "Reminders are on for this device.",
+    "unsupported": "This browser can't show notifications.",
+    "needsInstall": "On iPhone and iPad, first add Hisab to your Home Screen (Share → Add to Home Screen), then open it from there and turn reminders on.",
+    "denied": "Notifications are blocked for this site. Allow them in your browser's site settings, then try again.",
+    "saved": "Reminder time saved",
+    "enableFailed": "Couldn't turn on reminders. Please try again."
+  },
+  "blog": {
+    "nav": "Tips & articles",
+    "footerNav": "Site",
+    "title": "Tips & articles",
+    "subtitle": "Why it's worth writing your spending down, and how to make it stick. Short reads, backed by research where it matters.",
+    "metaTitle": "Tips & articles: tracking expenses, budgeting and money habits",
+    "metaDescription": "Short, practical reads on why tracking your spending works, how to start, and how to build a monthly budget from your real numbers. Backed by research.",
+    "whyHeading": "Why keep track?",
+    "howHeading": "How to get started",
+    "minutes": "{n} min read",
+    "author": "Hisab team",
+    "back": "All articles",
+    "next": "Read next",
+    "sources": "Sources",
+    "sourcesHint": "Every number in this article comes from these studies.",
+    "openApp": "Open app",
+    "login": "Log in",
+    "register": "Create an account",
+    "ctaGuestTitle": "Start keeping track today",
+    "ctaGuestBody": "Hisab is free, works in Bangla and English, and runs right on your phone. Signing up takes under a minute.",
+    "ctaGuest": "Create a free account",
+    "ctaUserTitle": "Try it today",
+    "ctaUserBody": "Log today's spending. It takes about a minute.",
+    "ctaUser": "Add an expense",
+    "whyNav": "Why Hisab?"
   }
 }

@@ -25,6 +25,22 @@ export function todayInTimeZone(tz: string, now: Date = new Date()): string {
   return `${get("year")}-${get("month")}-${get("day")}`;
 }
 
+/** Hour of the day (0-23) right now in a timezone. */
+export function hourInTimeZone(tz: string, now: Date = new Date()): number {
+  const h = new Intl.DateTimeFormat("en-US", {
+    timeZone: isValidTimeZone(tz) ? tz : "UTC",
+    hour: "numeric",
+    hourCycle: "h23",
+  }).format(now);
+  return Number(h);
+}
+
+/** "2026-10-16" + -1 → "2026-10-15". */
+export function addDays(day: string, delta: number): string {
+  const [y, m, d] = day.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d + delta)).toISOString().slice(0, 10);
+}
+
 export function isValidMonth(value: string | null | undefined): value is string {
   return !!value && MONTH_RE.test(value);
 }

@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { InstallPrompt, ServiceWorkerRegister } from "@/components/pwa/install";
 import { ThemeProvider } from "@/components/theme";
+import { SITE_URL } from "@/lib/site";
 import { defaultTheme, isTheme, THEME_COLOR, THEME_COOKIE, type Theme } from "@/lib/theme";
 import "./globals.css";
 
@@ -13,11 +14,18 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 const bengali = Noto_Sans_Bengali({ variable: "--font-bengali", subsets: ["bengali"] });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("common");
+  const [t, locale] = await Promise.all([getTranslations("common"), getLocale()]);
   return {
+    // Turns relative canonical / Open Graph URLs into absolute ones.
+    metadataBase: new URL(SITE_URL),
     title: { default: t("appName"), template: `%s · ${t("appName")}` },
     description: t("tagline"),
     applicationName: t("appName"),
+    openGraph: {
+      siteName: t("appName"),
+      locale: locale === "en" ? "en_US" : "bn_BD",
+      images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: t("appName") }],
+    },
     // iOS / iPadOS home-screen app
     appleWebApp: { capable: true, title: t("appName"), statusBarStyle: "default" },
     formatDetection: { telephone: false },

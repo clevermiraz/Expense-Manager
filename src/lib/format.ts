@@ -66,3 +66,15 @@ export function niceCeil(value: number): number {
   const step = value >= 10000 ? 500 : value >= 1000 ? 100 : value >= 100 ? 10 : 1;
   return Math.ceil(value / step) * step;
 }
+
+/** A clock hour as people say it: "9 PM" / "রাত ৯টা" (Intl's Bangla still says "PM"). */
+export function formatHour(hour: number, locale: string): string {
+  if (locale !== "bn") {
+    return new Intl.DateTimeFormat(tag(locale), { hour: "numeric", timeZone: "UTC" }).format(
+      new Date(Date.UTC(2026, 0, 1, hour)),
+    );
+  }
+  const period =
+    hour >= 4 && hour < 6 ? "ভোর" : hour >= 6 && hour < 12 ? "সকাল" : hour >= 12 && hour < 16 ? "দুপুর" : hour >= 16 && hour < 18 ? "বিকেল" : hour >= 18 && hour < 20 ? "সন্ধ্যা" : "রাত";
+  return `${period} ${formatNumber(hour % 12 || 12, locale)}টা`;
+}

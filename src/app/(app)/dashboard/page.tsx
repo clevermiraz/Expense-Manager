@@ -1,4 +1,4 @@
-import { ArrowDownRight, ArrowUpRight, Lightbulb, Receipt } from "lucide-react";
+import { ArrowDownRight, ArrowRight, ArrowUpRight, BookOpen, Lightbulb, Receipt } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -8,12 +8,22 @@ import { SpendBarChart } from "@/components/charts/bar-chart";
 import { RankedBars } from "@/components/charts/ranked-bars";
 import { CategoryIcon } from "@/components/category-icon";
 import { ExpenseList } from "@/components/expense-list";
+import { HabitCard } from "@/components/habit-card";
+import { blogPath, getArticle, localized, tipForDay } from "@/content/learn";
 import { MonthSwitcher } from "@/components/month-switcher";
 import { PageHeader } from "@/components/page-header";
 import { StatTile } from "@/components/stat-tile";
 import { Card, CardHeader, EmptyState } from "@/components/ui/card";
 import { categoryLabel } from "@/lib/category-label";
-import { getBudgets, getCategories, getCategoryMonthMatrix, getExpenses, getMonthSummary } from "@/lib/data";
+import {
+  getBudgets,
+  getCategories,
+  getCategoryMonthMatrix,
+  getExpenses,
+  getLoggingStreak,
+  getMonthSummary,
+  getReminder,
+} from "@/lib/data";
 import { addMonths, daysInMonth, monthOf, resolveMonth } from "@/lib/dates";
 import { formatDay, formatMoney, formatMonth, formatNumber, formatPercent } from "@/lib/format";
 import { requireUser, userToday } from "@/lib/session";
@@ -31,7 +41,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
   const month = resolveMonth(sp.month, currentMonth);
   const prevMonth = addMonths(month, -1);
 
-  const [summary, prev, budgets, categories, expenses, history, t, tc, locale] = await Promise.all([
+  const [summary, prev, budgets, categories, expenses, history, streak, reminder, t, tc, ttip, locale] = await Promise.all([
     getMonthSummary(user.id, month),
     getMonthSummary(user.id, prevMonth),
     getBudgets(user.id),
@@ -39,8 +49,11 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
     getExpenses(user.id, { month }),
     // the 3 months before the selected one, for "unusual spending" hints
     getCategoryMonthMatrix(user.id, prevMonth, 3),
+    getLoggingStreak(user.id, today),
+    getReminder(user.id),
     getTranslations("dashboard"),
     getTranslations("categories"),
+    getTranslations("tip"),
     getLocale(),
   ]);
 
@@ -95,6 +108,9 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
     .sort((a, b) => b.spent / b.limit - a.spent / a.limit);
 
   const hasAnyData = summary.count > 0;
+  const tip = tipForDay(today);
+  const showHabit = hasAnyData || streak.days > 0;
+  const tipArticle = getArticle(tip.slug)!;
 
   return (
     <>
@@ -166,6 +182,30 @@ export default async function DashboardPage({ searchParams }: PageProps<"/dashbo
           }
         />
       </div>
+
+      {/* The habit (streak + reminder) and a research tip: why keep doing this. */}
+      {isCurrent && (
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
+          {showHabit && <HabitCard streak={streak} reminderHour={reminder.hour} />}
+          <Link
+            href={blogPath(locale, tip.slug)}
+            data-testid="tip-card"
+            className={`group flex items-start gap-3 ${showHabit ? "" : "lg:col-span-2"} rounded-3xl border border-line/70 bg-surface p-4 shadow-card transition-colors hover:bg-muted/40 sm:p-5`}
+          >
+            <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary-soft text-primary">
+              <BookOpen className="size-5" aria-hidden />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-xs font-semibold text-primary">{ttip("title")}</span>
+              <span className="mt-1 block text-sm leading-relaxed text-ink">{locale === "en" ? tip.en : tip.bn}</span>
+              <span className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-primary">
+                {ttip("more")}: {localized(tipArticle, locale).title}
+                <ArrowRight className="size-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              </span>
+            </span>
+          </Link>
+        </div>
+      )}
 
       {!hasAnyData ? (
         <Card className="mt-4">

@@ -1,8 +1,8 @@
 import "server-only";
-import { and, asc, desc, eq, gte, ilike, lt, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, lt, lte, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { budget, category, expense } from "@/db/schema";
-import { addMonths, monthRange } from "@/lib/dates";
+import { budget, category, expense, reminder } from "@/db/schema";
+import { addDays, addMonths, monthRange } from "@/lib/dates";
 import { DEFAULT_CATEGORIES, FALLBACK_CATEGORY_KEY } from "@/lib/default-categories";
 
 // Every function takes the userId explicitly and filters by it. Callers get it
@@ -91,6 +91,45 @@ export async function getRecentExpenses(userId: string, limit = 6): Promise<Expe
     .where(eq(expense.userId, userId))
     .orderBy(desc(expense.spentOn), desc(expense.createdAt))
     .limit(limit);
+}
+
+export type LoggingStreak = {
+  /** Days in a row with at least one expense, ending today or yesterday. */
+  days: number;
+  loggedToday: boolean;
+  /** Oldest → newest, the last 7 days ending today: was anything logged? */
+  week: { day: string; logged: boolean }[];
+};
+
+/**
+ * The record-keeping habit: how many days in a row the user has written
+ * something down. A streak still counts while today is not logged yet, so
+ * the reminder can say "don't break it".
+ */
+export async function getLoggingStreak(userId: string, today: string): Promise<LoggingStreak> {
+  const rows = await db
+    .selectDistinct({ day: expense.spentOn })
+    .from(expense)
+    .where(and(eq(expense.userId, userId), gte(expense.spentOn, addDays(today, -400)), lte(expense.spentOn, today)))
+    .orderBy(desc(expense.spentOn));
+  const logged = new Set(rows.map((r) => r.day));
+  const loggedToday = logged.has(today);
+  let days = 0;
+  for (let d = loggedToday ? today : addDays(today, -1); logged.has(d); d = addDays(d, -1)) days++;
+  const week = Array.from({ length: 7 }, (_, i) => {
+    const day = addDays(today, i - 6);
+    return { day, logged: logged.has(day) };
+  });
+  return { days, loggedToday, week };
+}
+
+/** The user's reminder settings; the hour defaults to 9 PM until they pick one. */
+export async function getReminder(userId: string): Promise<{ enabled: boolean; hour: number }> {
+  const [row] = await db
+    .select({ enabled: reminder.enabled, hour: reminder.hour })
+    .from(reminder)
+    .where(eq(reminder.userId, userId));
+  return row ?? { enabled: false, hour: 21 };
 }
 
 /** How many past notes to offer per category in the add sheet. */

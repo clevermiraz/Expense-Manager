@@ -12,6 +12,8 @@ import { InstallCard } from "@/components/pwa/install";
 import { ThemeSwitcher } from "@/components/theme";
 import { buttonClass } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
+import { ReminderSettings } from "@/components/settings/reminder-settings";
+import { getReminder } from "@/lib/data";
 import { requireUser } from "@/lib/session";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,7 +23,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SettingsPage() {
   const user = await requireUser();
-  const [t, tt] = await Promise.all([getTranslations("settings"), getTranslations("theme")]);
+  const [t, tt, reminder] = await Promise.all([
+    getTranslations("settings"),
+    getTranslations("theme"),
+    getReminder(user.id),
+  ]);
 
   return (
     <>
@@ -42,6 +48,7 @@ export default async function SettingsPage() {
             </div>
           </Card>
           <InstallCard />
+          <ReminderSettings hour={reminder.hour} />
           <Card>
             <CardHeader title={t("profile")} subtitle={user.email} />
             <ProfileForm name={user.name} currency={user.currency} timezone={user.timezone} />

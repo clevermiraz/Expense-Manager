@@ -3,6 +3,7 @@ import {
   boolean,
   date,
   index,
+  integer,
   numeric,
   pgTable,
   text,
@@ -158,6 +159,40 @@ export const budget = pgTable(
       .$onUpdate(() => new Date()),
   },
   (t) => [unique("budget_user_category_uq").on(t.userId, t.categoryId).nullsNotDistinct()],
+);
+
+// Daily reminder settings, one row per user who turned reminders on.
+export const reminder = pgTable("reminder", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  enabled: boolean("enabled").notNull().default(true),
+  // Local hour (0-23, in the user's timezone) to remind if nothing was added that day.
+  hour: integer("hour").notNull().default(21),
+  // Local date of the last reminder sent, so it goes out at most once a day.
+  lastSentOn: date("last_sent_on", { mode: "string" }),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+// One row per browser / installed app that allowed notifications.
+export const pushSubscription = pgTable(
+  "push_subscription",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    endpoint: text("endpoint").notNull().unique(),
+    p256dh: text("p256dh").notNull(),
+    auth: text("auth").notNull(),
+    // UI language when subscribing, so the reminder text matches it.
+    locale: text("locale").notNull().default("bn"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("push_subscription_user_idx").on(t.userId)],
 );
 
 export const categoryRelations = relations(category, ({ many }) => ({

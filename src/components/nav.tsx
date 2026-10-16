@@ -1,12 +1,13 @@
 "use client";
 
-import { ChartColumn, ChevronRight, LayoutDashboard, ListOrdered, LogOut, Plus, Settings, Target } from "lucide-react";
+import { BookOpen, ChartColumn, ChevronRight, LayoutDashboard, ListOrdered, LogOut, Plus, Settings, Target } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { useApp } from "@/components/app-context";
 import { Dialog, DialogBody } from "@/components/ui/dialog";
+import { whyPath } from "@/content/learn";
 import { authClient } from "@/lib/auth-client";
 
 const ITEMS = [
@@ -34,6 +35,7 @@ function useActive() {
 
 export function SidebarNav() {
   const t = useTranslations("nav");
+  const locale = useLocale();
   const { isActive, onTap } = useActive();
   const { openExpense } = useApp();
   return (
@@ -60,6 +62,14 @@ export function SidebarNav() {
           {t(key)}
         </Link>
       ))}
+      {/* Why use Hisab (and from there, the tips and articles). */}
+      <Link
+        href={whyPath(locale)}
+        className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-ink-2 transition-colors hover:bg-muted hover:text-ink"
+      >
+        <BookOpen className="size-4.5" aria-hidden />
+        {t("learn")}
+      </Link>
     </nav>
   );
 }
@@ -138,6 +148,7 @@ export function SignOutButton({ className = "", danger = false }: { className?: 
 /** Phone header: avatar that opens a sheet with the account, Settings and a clear Sign out. */
 export function AccountMenu({ name, email }: { name: string; email: string }) {
   const t = useTranslations("nav");
+  const locale = useLocale();
   const tc = useTranslations("common");
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -170,14 +181,20 @@ export function AccountMenu({ name, email }: { name: string; email: string }) {
                 <p className="truncate text-sm text-ink-3">{email}</p>
               </div>
             </div>
-            <Link
-              href="/settings"
-              className="flex items-center gap-3 rounded-2xl border border-line px-4 py-3 text-sm font-medium text-ink hover:bg-muted"
-            >
-              <Settings className="size-4.5 text-ink-2" aria-hidden />
-              <span className="flex-1">{t("settings")}</span>
-              <ChevronRight className="size-4 text-ink-3" aria-hidden />
-            </Link>
+            {[
+              { href: "/settings", label: t("settings"), Icon: Settings },
+              { href: whyPath(locale), label: t("learn"), Icon: BookOpen },
+            ].map(({ href, label, Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className="flex items-center gap-3 rounded-2xl border border-line px-4 py-3 text-sm font-medium text-ink hover:bg-muted"
+              >
+                <Icon className="size-4.5 text-ink-2" aria-hidden />
+                <span className="flex-1">{label}</span>
+                <ChevronRight className="size-4 text-ink-3" aria-hidden />
+              </Link>
+            ))}
             <SignOutButton danger className="h-12 w-full justify-center rounded-2xl" />
           </div>
         </DialogBody>

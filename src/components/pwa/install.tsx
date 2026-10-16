@@ -163,9 +163,11 @@ export function InstallCard() {
 
 export function ServiceWorkerRegister() {
   useEffect(() => {
-    // Dev builds aren't content-hashed, so caching them would serve stale code.
-    if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.register("/sw.js", { scope: "/", updateViaCache: "none" }).catch(() => {});
+    if (!("serviceWorker" in navigator)) return;
+    // In dev the worker only handles push (dev assets aren't content-hashed, so
+    // caching them would serve stale code); "?dev" tells it so.
+    const url = process.env.NODE_ENV === "production" ? "/sw.js" : "/sw.js?dev";
+    navigator.serviceWorker.register(url, { scope: "/", updateViaCache: "none" }).catch(() => {});
   }, []);
   return null;
 }

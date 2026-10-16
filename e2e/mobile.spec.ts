@@ -21,7 +21,7 @@ test("mobile: bottom nav and floating add button", async ({ page }) => {
   await expect(page.getByTestId("expense-row")).toHaveCount(1);
 
   // No horizontal overflow on any main page.
-  for (const path of ["/dashboard", "/expenses", "/insights", "/budgets", "/settings"]) {
+  for (const path of ["/dashboard", "/expenses", "/insights", "/budgets", "/settings", "/blog", "/blog/monthly-budget", "/en/blog/habit"]) {
     await page.goto(path);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow, `horizontal overflow on ${path}`).toBeLessThanOrEqual(0);
