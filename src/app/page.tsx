@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarDays, ChartColumn, Languages, Target } from "lucide-react";
+import { ArrowRight, CalendarDays, ChartColumn, Languages, ShieldCheck, Target } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -74,6 +74,9 @@ export default async function Home() {
                 {t("login")}
               </Link>
             </div>
+            <p className="mt-3 text-xs text-ink-3">
+              {t("trust")}
+            </p>
             <div className="mt-3 flex justify-center lg:justify-start">
               <InstallButton className="h-11 border-dashed" />
             </div>
@@ -189,6 +192,15 @@ export default async function Home() {
               );
             })}
           </ul>
+        </section>
+
+        <section className="mb-14 rounded-3xl border border-line/70 bg-surface p-6 sm:p-8 text-center shadow-card">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-good/15 px-3 py-1 text-xs font-semibold text-good">
+            <ShieldCheck className="size-3.5" aria-hidden />
+            <span>{t("privacyBadge")}</span>
+          </span>
+          <h2 className="mt-2 text-xl font-bold tracking-tight text-ink sm:text-2xl">{t("privacyTitle")}</h2>
+          <p className="mx-auto mt-2 max-w-lg text-sm text-ink-2 leading-relaxed">{t("privacyBody")}</p>
         </section>
 
         <section className="mb-16 rounded-3xl bg-linear-to-br from-brand-from to-brand-to px-5 py-10 text-center text-white shadow-card">

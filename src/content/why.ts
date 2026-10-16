@@ -32,8 +32,8 @@ export const WHY = {
       en: "Mid-month and wondering where your money vanished to? Spend just 30 seconds a day with Hisab—and finally get clear, stress-free visibility into every single taka you spend.",
     },
     trust: {
-      bn: "✓ আজীবন ফ্রি   ✓ ১ মিনিটে অ্যাকাউন্ট   ✓ কোনো কার্ড লাগবে না",
-      en: "✓ Free forever   ✓ 1-minute signup   ✓ No card needed",
+      bn: "✓ আজীবন সম্পূর্ণ ফ্রি   ✓ ১ মিনিটে অ্যাকাউন্ট   ✓ কোনো ব্যাংক বা কার্ড লাগবে না",
+      en: "✓ 100% Free forever   ✓ 1-minute signup   ✓ No bank or card needed",
     },
   },
   problems: {
@@ -271,8 +271,8 @@ export const WHY = {
     open: { bn: "অ্যাপ খুলুন", en: "Open the app" },
     articles: { bn: "আরও পড়ুন: টিপস ও লেখা", en: "Read more: tips and articles" },
     trust: {
-      bn: "✓ ১০০% আজীবন ফ্রি   ✓ ১ মিনিটে অ্যাকাউন্ট   ✓ ফোনের জন্য পারফেক্ট",
-      en: "✓ 100% Free forever   ✓ 1-minute setup   ✓ Works great on phones",
+      bn: "✓ আজীবন সম্পূর্ণ ফ্রি   ✓ ১ মিনিটে অ্যাকাউন্ট   ✓ কোনো ব্যাংক বা কার্ড লাগবে না",
+      en: "✓ 100% Free forever   ✓ 1-minute setup   ✓ No bank or card required",
     },
   },
 };
