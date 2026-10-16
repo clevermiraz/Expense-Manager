@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, type YAxisTickContentProps } from "recharts";
 import { formatCompact, formatMoney } from "@/lib/format";
 
 export type BarDatum = { key: string; tick: string; label: string; value: number; muted?: boolean };
@@ -23,6 +23,12 @@ export function SpendBarChart({
   ariaLabel: string;
 }) {
   const locale = useLocale();
+  const tick = (v: number) => formatCompact(v, locale);
+  // Room for the longest y-axis label (the top tick can round above the
+  // max, e.g. 1,086 → "১.২ হাজার"); labels are never wrapped onto two lines.
+  const max = Math.max(0, ...data.map((d) => d.value));
+  const longest = Math.max(tick(max).length, tick(max * 1.25).length);
+  const axisWidth = Math.min(96, Math.max(36, Math.round(longest * (locale === "bn" ? 7 : 6.5) + 12)));
   return (
     <div role="img" aria-label={ariaLabel} style={{ height }} className="w-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -37,12 +43,16 @@ export function SpendBarChart({
             minTickGap={6}
           />
           <YAxis
-            width={locale === "bn" ? 64 : 48}
+            width={axisWidth}
             tickLine={false}
             axisLine={false}
-            tick={{ fill: "var(--chart-axis)", fontSize: 11 }}
-            tickFormatter={(v: number) => formatCompact(v, locale)}
             allowDecimals={false}
+            // Plain <text>: Recharts' default tick wraps at spaces ("১.২ / হাজার").
+            tick={({ x, y, payload }: YAxisTickContentProps) => (
+              <text x={x} y={y} dy={4} textAnchor="end" fill="var(--chart-axis)" fontSize={11}>
+                {tick(Number(payload.value))}
+              </text>
+            )}
           />
           <Tooltip
             cursor={{ fill: "var(--muted)" }}

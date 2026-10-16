@@ -429,5 +429,18 @@
     "ctaUserBody": "Log today's spending. It takes about a minute.",
     "ctaUser": "Add an expense",
     "whyNav": "Why Hisab?"
+  },
+  "errorPage": {
+    "title": "Something didn't load properly",
+    "body": "Something went wrong on our side. Please try again in a moment; the expenses you've already saved are not affected.",
+    "retry": "Try again",
+    "home": "Go to the home page",
+    "code": "Error code: {code}"
+  },
+  "notFound": {
+    "title": "We couldn't find that page",
+    "body": "The link may be old, or the address may have a typo.",
+    "home": "Go to the home page",
+    "why": "Why use Hisab?"
   }
 }
